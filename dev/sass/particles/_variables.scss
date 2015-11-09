@@ -16,9 +16,9 @@ $midnight:       #2C3E50;
 $green-flat:     #51cf99;
 
 // Color Pallette
-$primary:         $teal                     !default;
-$primary-light:   lighten($teal, 7.5%)      !default;
-$primary-dark:    darken($teal, 10%)        !default;
+$primary:         $green-flat               !default;
+$primary-light:   lighten($green-flat, 7.5%)!default;
+$primary-dark:    darken($green-flat, 10%)  !default;
 $primary-2:       #4eb4c0                   !default;
 
 $secondary:       $red-flat                 !default;

@@ -41,6 +41,15 @@ UserAlert.prototype = {
 
   _setHooks: function () {
     this.closeBtn.addEventListener('click', this.hide.bind(this));
+    document.addEventListener('keydown', this.handleKeydown.bind(this));
+  },
+
+  handleKeydown:  function(evt) {
+    var alertIsVisible = !this.alertContainer.classList.contains('hide');
+    evt = evt || window.event;
+    if (evt.keyCode == 27 && alertIsVisible) {
+      this.hide();
+    }
   },
 
   setContainerClass: function (alertType) {
@@ -101,30 +110,32 @@ UserAlert.prototype = {
     } else {
       this.closeBtn.classList.add('hide');
       util.fadeIn(this.alertContainer, function() {
-        // Set timeout here... this.options.duration
-        this.hide(this.options.closeHandler);
+        setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
       });
     }
   },
 
   makeConfirm: function () {
-    this.noBtn.textContent(this.options.noText);
-    this.yesBtn.textContent(this.options.yesText);
+    this.noBtn.textContent = this.options.noText;
+    this.yesBtn.textContent = this.options.yesText;
 
-    this.yesBtn.addEventListener('click', this.handleYesClick.bind(this));
-    this.noBtn.addEventListener('click', this.handleNoClick.bind(this));
+    this.yesHandler = this.handleYesClick.bind(this);
+    this.noHandler = this.handleNoClick.bind(this);
 
-    this.alertContainer.querySelectorAll('.user-alert-footer').innerHTML = confBtnWrap.outerHTML;
+    this.yesBtn.addEventListener('click', this.yesHandler);
+    this.noBtn.addEventListener('click', this.noHandler);
   },
 
   handleYesClick: function (e) {
     this.hide(this.options.closeHandler);
     if (this.options.yesHandler) { this.options.yesHandler(); }
+    this.yesBtn.removeEventListener('click', this.yesHandler);
   },
 
   handleNoClick: function (e) {
     this.hide(this.options.closeHandler);
     if (this.options.noHandler) { this.options.noHandler(); }
+    this.noBtn.removeEventListener('click', this.noHandler);
   },
 
   hide: function (callback) {

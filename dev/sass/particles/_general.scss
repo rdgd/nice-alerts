@@ -1,9 +1,5 @@
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
-.hide {
-  display:none;
-}
-
 #user-alert {
   padding: 20px;
   position: fixed;
@@ -14,9 +10,9 @@
   @include border-radius(5px);
   @include font-size(14);
   color: $gray;
-  z-index: 9999;
+  z-index: 100;
   width: 55%;
-  max-width: 600px;
+  max-width: 650px !important;
   i { @include font-size(26); }
 
   .close {
@@ -24,12 +20,12 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    height: 45px;
+    height: 45px !important;
     width: 45px;
     padding: 0;
     background: white;
-    z-index: 9999999;
-    border: none;
+    z-index: 200;
+    cursor: pointer;
     &:hover {
       color: $secondary;
     }
@@ -38,7 +34,7 @@
   .user-message-container {
     display: block;
     width: 100%;
-    > div {
+    > .user-alert-icon, .message-text-container {
       display: inline-block;
       height: 100%;
       vertical-align: middle;
@@ -50,49 +46,71 @@
     }
     .message-text-container {
       width: 75%;
-      margin-left: 2%;
     }
   }
 
   .user-alert-footer {
-    .btn {
-      min-width: 100px;
+    hr {
+      margin-top: 20px;
+      margin-bottom: 20px;
     }
-    .btn-close-confirm {
-      margin-right: 8px;
-      background-color: $secondary;
-       &:hover {
-        background-color: $second-dark;
+    .btn-wrapper {
+      width: 30%;
+      min-width: 125px;
+      display: inline-block;
+      .btn {
+        width: 90%;
+        height: 50px;
+        border: none;
+        cursor: pointer;
+        @include font-size(10);
+        @include border-radius(3px);
+        @include transition(background-color, 200ms, ease-in-out);
+        @include transition(box-shadow, 200ms, ease-in-out);
+        @include transition(-moz-box-shadow, 200ms, ease-in-out);
+        @include transition(-webkit-box-shadow, 200ms, ease-in-out);
       }
-      background-color: $secondary;
-      &:hover {
-        background-color: $second-dark;
-      }
-      &:focus {
+
+      #btn-no {
         background-color: $second-dark;
         &:hover {
-          background-color: $second-dark;
+          background-color: $secondary;
+          @include box-shadow($horizontal: 0px, $vertical: 1px, $blur: 3px, $color: $gray-darkest);
+        }
+        &:focus {
+          background-color: $secondary;
+          @include box-shadow($horizontal: 0px, $vertical: 1px, $blur: 3px, $color: $gray-darkest);
+          &:hover {
+            background-color: $secondary;
+            @include box-shadow($horizontal: 0px, $vertical: 1px, $blur: 3px, $color: $gray-darkest);
+          }
+        }
+      }
+
+      #btn-yes {
+        background-color: $primary-dark;
+         &:hover {
+          background-color: $primary;
+          @include box-shadow($horizontal: 0px, $vertical: 1px, $blur: 3px, $color: $gray-darkest);
+        }
+        &:focus {
+          background-color: $primary;
+          @include box-shadow($horizontal: 0px, $vertical: 1px, $blur: 3px, $color: $gray-darkest);
+          &:hover {
+            background-color: $primary;
+            @include box-shadow($horizontal: 0px, $vertical: 1px, $blur: 3px, $color: $gray-darkest);
+          }
         }
       }
     }
   }
 }
 
+
+// Different color icons per alert type
 .message-info {
   .user-alert-icon i {
     color:$info;
-  }
-  .btn-close-confirm {
-    background-color: $fourth;
-    &:hover {
-      background-color: $fourth-dark;
-    }
-    &:focus {
-      background-color: $fourth-dark;
-      &:hover {
-        background-color: $fourth-dark;
-      }
-    }
   }
 }
 
@@ -100,20 +118,11 @@
   .user-alert-icon i {
     color:$green-flat;
   }
-  .btn-close-confirm {
-    background-color: $primary;
-    &:hover {
-      background-color: $primary-dark;
-    }
-  }
-  .close {
-    display: none;
-  }
 }
 
 .message-confirm {
   .user-alert-icon i {
-    color:$success;
+    color:$teal;
   }
 }
 

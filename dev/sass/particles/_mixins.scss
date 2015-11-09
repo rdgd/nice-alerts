@@ -4,6 +4,12 @@
   background-clip: padding-box;  /* stops bg color from leaking */
 }
 
+@mixin box-shadow($horizontal: 0px, $vertical: 1px, $blur: 2px, $color: #CCC) {
+  -webkit-box-shadow: $horizontal $vertical $blur $color;
+  -moz-box-shadow: $horizontal $vertical $blur $color;
+  box-shadow: $horizontal $vertical $blur $color;
+}
+
 // Single side border-radius
 @mixin border-top-radius($radius) {
   -webkit-border-top-right-radius: $radius;
