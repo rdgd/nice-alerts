@@ -1,0 +1,9 @@
+# Pesky .DS_Store
+.DS_Store
+
+# Ignore sass-cache files
+*.sass-cache
+*.sass-cache/*
+
+#Ignore node modules
+node_modules/*

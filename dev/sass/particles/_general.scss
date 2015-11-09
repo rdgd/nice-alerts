@@ -1,0 +1,112 @@
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+
+.hide {
+  display:none;
+}
+
+#user-alert {
+  padding: 20px;
+
+  .close {
+    color: $gray;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 45px;
+    width: 45px;
+    padding: 0;
+    background: white;
+    z-index: 9999999;
+    border: none;
+    &:hover {
+      color: $secondary;
+    }
+  }
+
+  .user-message-container {
+    display: block;
+    width: 100%;
+    > div {
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+      &:last-child { padding-left: 0; }
+    }
+    .user-alert-icon {
+      width: 19%;
+      i { @include font-size(60); }
+    }
+    .message-text-container {
+      width: 75%;
+      margin-left: 2%;
+    }
+  }
+
+  .user-alert-footer {
+    .btn {
+      min-width: 100px;
+    }
+    .btn-close-confirm {
+      margin-right: 8px;
+      background-color: $secondary;
+       &:hover {
+        background-color: $second-dark;
+      }
+      background-color: $secondary;
+      &:hover {
+        background-color: $second-dark;
+      }
+      &:focus {
+        background-color: $second-dark;
+        &:hover {
+          background-color: $second-dark;
+        }
+      }
+    }
+  }
+}
+
+.message-success,
+.message-failure,
+.message-info,
+.message-confirm {
+  position: fixed;
+  left: 22%;
+  top: 30%;
+  background-color: white;
+  border: 3px solid $gray;
+  @include border-radius(5px);
+  @include font-size(14);
+  color: $gray;
+  z-index: 9999;
+  width: 55%;
+  max-width: 600px;
+  i { @include font-size(26); }
+}
+
+.message-info {
+  .btn-close-confirm {
+    background-color: $fourth;
+    &:hover {
+      background-color: $fourth-dark;
+    }
+    &:focus {
+      background-color: $fourth-dark;
+      &:hover {
+        background-color: $fourth-dark;
+      }
+    }
+  }
+}
+
+.message-success {
+  .btn-close-confirm {
+    background-color: $primary;
+    &:hover {
+      background-color: $primary-dark;
+    }
+  }
+  .close {
+    display: none;
+  }
+}

@@ -1,0 +1,84 @@
+// Grays
+$gray-darkest:           lighten(#000, 7.5%)  !default; // #111
+$gray-darker:            lighten(#000, 13.5%) !default; // #222
+$gray-dark:              lighten(#000, 20%)   !default; // #333
+$gray:                   lighten(#000, 33.5%) !default; // #555
+$gray-light:             lighten(#000, 60%)   !default; // #999
+$gray-lighter:           lighten(#000, 93.5%) !default; // #eee
+$almost-white:           #f7f7f7              !default;
+
+// Base Colors
+$teal:           #009DAD;
+$red-flat:       #E74C3C;
+$yellow:         #F1C40F;
+$orange:         #e6931c;
+$midnight:       #2C3E50;
+$green-flat:     #51cf99;
+
+// Color Pallette
+$primary:         $teal                     !default;
+$primary-light:   lighten($teal, 7.5%)      !default;
+$primary-dark:    darken($teal, 10%)        !default;
+$primary-2:       #4eb4c0                   !default;
+
+$secondary:       $red-flat                 !default;
+$second-light:    lighten($red-flat, 5.5%)  !default;
+$second-lighter:  lighten($red-flat, 35.5%) !default;
+$second-dark:     darken($red-flat, 7.5%)   !default;
+$second-darker:   darken($red-flat, 20%)    !default;
+
+$third:           $yellow                   !default;
+$fourth:          $orange                   !default;
+$fourth-dark:     darken($orange, 5%)       !default;
+$fifth:           $green-flat               !default;
+$fifth-dark:      darken($green-flat, 10%)  !default;
+$sixth:           $midnight                 !default;
+
+$success:         $primary                  !default;
+$warning:         #f0ad4e                   !default; // Orange
+$danger:          $red-flat                 !default;
+$info:            #5bc0de                   !default; // Sky blue
+
+$body-bg:         #fff                      !default;
+$bg-dark:         $gray-darker;
+$text-color:      $gray-dark                !default;
+
+// Links
+$link-color:              $primary           !default;
+$link-hover-color:        darken($link-color, 15%) !default;
+$link-hover-bg-color:     #009DAD                  !default;
+$link-hover-color-second: #009DAD                  !default;
+
+// Typography
+$font-family-primary:     "droid_sans", Helvetica-, Arial, sans-serif !default;
+$font-family-sans-serif:  Helvetica, Arial, sans-serif                !default;
+$font-family-serif:       Georgia, "Times New Roman-", Times, serif   !default;
+$font-family-monospace:   Monaco, Menlo, Consolas, "Courier- New", monospace !default;
+$font-family-base:        $font-family-primary          !default;
+$font-family-second:      $font-family-sans-serif       !default;
+
+
+$main-font-size:          62.5%;
+$font-size-base:          14px !default;
+$font-size-large:         ceil($font-size-base * 1.25)  !default; // ~18px
+$font-size-small:         ceil($font-size-base * 0.85)  !default; // ~12px
+
+$font-size-h1:            floor($font-size-base * 2.60) !default; // ~36px
+$font-size-h2:            floor($font-size-base * 2.15) !default; // ~30px
+$font-size-h3:            ceil($font-size-base * 1.70)  !default; // ~24px
+$font-size-h4:            ceil($font-size-base * 1.25)  !default; // ~18px
+$font-size-h5:            $font-size-base               !default;
+$font-size-h6:            ceil($font-size-base * 0.85)  !default; // ~12px
+
+$line-height-base:        1.428571429                   !default; // 20/14
+$line-height-computed:    floor($font-size-base * $line-height-base) !default; // ~20px
+
+$headings-font-family:    $font-family-base             !default;
+$headings-font-weight:    500                           !default;
+$headings-line-height:    1.1                           !default;
+$headings-color:          inherit                       !default;
+
+// Borders
+$border-solid-thin:      1px solid;
+$border-solid-medium:    3px solid;
+$border-solid-thick:     6px solid;
