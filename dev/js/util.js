@@ -34,7 +34,7 @@ module.exports = {
     };
 
     tick();
-    if (callback) { callback(); }
+    if (callback && typeof callback == 'function') { callback(); }
   },
 
   fadeOut: function (el, callback) {
@@ -46,6 +46,6 @@ module.exports = {
         requestAnimationFrame(fade);
       }
     })();
-    if (callback) { callback(); }
+    if (callback && typeof callback == 'function') { callback(); }
   }
 };

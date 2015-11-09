@@ -26,6 +26,7 @@
     background: white;
     z-index: 200;
     cursor: pointer;
+    @include transition(color, 200ms, ease-in-out);
     &:hover {
       color: $secondary;
     }
