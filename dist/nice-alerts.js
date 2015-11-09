@@ -157,7 +157,7 @@
 	      this.closeBtn.classList.add('hide');
 	      util.fadeIn(this.alertContainer, function() {
 	        setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
-	      });
+	      }.bind(this));
 	    }
 	  },
 
@@ -185,8 +185,9 @@
 	  },
 
 	  hide: function (callback) {
-	    this.alertContainer.classList.add('hide');
-	    if (typeof callback == 'function') { callback(); }
+	    util.fadeOut(this.alertContainer, callback);
+	    // R this.alertContainer.classList.add('hide');
+	    // R if (typeof callback == 'function') { callback(); }
 	  }
 	};
 
@@ -583,6 +584,18 @@
 	    };
 
 	    tick();
+	    if (callback) { callback(); }
+	  },
+
+	  fadeOut: function (el, callback) {
+	    el.style.opacity = 1;
+	    (function fade () {
+	      if ((el.style.opacity -= 0.1) < 0) {
+	        el.classList.add('hide');
+	      } else {
+	        requestAnimationFrame(fade);
+	      }
+	    })();
 	    if (callback) { callback(); }
 	  }
 	};

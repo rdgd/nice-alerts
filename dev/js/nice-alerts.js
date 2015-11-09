@@ -111,7 +111,7 @@ UserAlert.prototype = {
       this.closeBtn.classList.add('hide');
       util.fadeIn(this.alertContainer, function() {
         setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
-      });
+      }.bind(this));
     }
   },
 
@@ -139,8 +139,9 @@ UserAlert.prototype = {
   },
 
   hide: function (callback) {
-    this.alertContainer.classList.add('hide');
-    if (typeof callback == 'function') { callback(); }
+    util.fadeOut(this.alertContainer, callback);
+    // R this.alertContainer.classList.add('hide');
+    // R if (typeof callback == 'function') { callback(); }
   }
 };
 

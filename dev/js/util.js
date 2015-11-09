@@ -35,5 +35,17 @@ module.exports = {
 
     tick();
     if (callback) { callback(); }
+  },
+
+  fadeOut: function (el, callback) {
+    el.style.opacity = 1;
+    (function fade () {
+      if ((el.style.opacity -= 0.1) < 0) {
+        el.classList.add('hide');
+      } else {
+        requestAnimationFrame(fade);
+      }
+    })();
+    if (callback) { callback(); }
   }
 };
