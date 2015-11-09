@@ -30,6 +30,7 @@ UserAlert.prototype = {
 
   _selectElements: function () {
     this.alertContainer = document.getElementById('user-alert');
+    this.icon = this.alertContainer.querySelector('.user-alert-icon i');
     this.yesBtn = document.getElementById('btn-yes');
     this.noBtn = document.getElementById('btn-no');
     this.message = document.createElement('span');
@@ -43,30 +44,36 @@ UserAlert.prototype = {
   },
 
   setContainerClass: function (alertType) {
-    var className;
+    // Defaults
+    var className = 'message-info';
+    var iconName = 'info';
+
     switch (alertType) {
       case 'success': {
         className = 'message-success';
+        iconName = 'check_circle';
         break;
       }
       case 'failure': {
         className = 'message-failure';
+        iconName = 'error';
+        break;
+      }
+      case 'warning': {
+        className = 'message-warning';
+        iconName = 'warning';
         break;
       }
       case 'confirm': {
         className = 'message-confirm';
+        iconName = 'question_answer';
         break;
       }
-      case 'info': {
-        className = 'message-info';
-        break;
-      }
-      default: {
-        className = 'message-info';
-        break;
-      }
+      case 'info': { break; }
+      default: { break; }
     }
     this.alertContainer.setAttribute('class', className);
+    this.icon.textContent = iconName;
   },
 
   setMessage: function (msg) {

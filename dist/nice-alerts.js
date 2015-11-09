@@ -76,6 +76,7 @@
 
 	  _selectElements: function () {
 	    this.alertContainer = document.getElementById('user-alert');
+	    this.icon = this.alertContainer.querySelector('.user-alert-icon i');
 	    this.yesBtn = document.getElementById('btn-yes');
 	    this.noBtn = document.getElementById('btn-no');
 	    this.message = document.createElement('span');
@@ -89,30 +90,36 @@
 	  },
 
 	  setContainerClass: function (alertType) {
-	    var className;
+	    // Defaults
+	    var className = 'message-info';
+	    var iconName = 'info';
+
 	    switch (alertType) {
 	      case 'success': {
 	        className = 'message-success';
+	        iconName = 'check_circle';
 	        break;
 	      }
 	      case 'failure': {
 	        className = 'message-failure';
+	        iconName = 'error';
+	        break;
+	      }
+	      case 'warning': {
+	        className = 'message-warning';
+	        iconName = 'warning';
 	        break;
 	      }
 	      case 'confirm': {
 	        className = 'message-confirm';
+	        iconName = 'question_answer';
 	        break;
 	      }
-	      case 'info': {
-	        className = 'message-info';
-	        break;
-	      }
-	      default: {
-	        className = 'message-info';
-	        break;
-	      }
+	      case 'info': { break; }
+	      default: { break; }
 	    }
 	    this.alertContainer.setAttribute('class', className);
+	    this.icon.textContent = iconName;
 	  },
 
 	  setMessage: function (msg) {
@@ -210,7 +217,7 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/icon?family=Material+Icons);", ""]);
 
 	// module
-	exports.push([module.id, ".hide {\n  display: none; }\n\n#user-alert {\n  padding: 20px; }\n  #user-alert .close {\n    color: #555555;\n    position: absolute;\n    top: 10px;\n    right: 10px;\n    height: 45px;\n    width: 45px;\n    padding: 0;\n    background: white;\n    z-index: 9999999;\n    border: none; }\n    #user-alert .close:hover {\n      color: #E74C3C; }\n  #user-alert .user-message-container {\n    display: block;\n    width: 100%; }\n    #user-alert .user-message-container > div {\n      display: inline-block;\n      height: 100%;\n      vertical-align: middle; }\n      #user-alert .user-message-container > div:last-child {\n        padding-left: 0; }\n    #user-alert .user-message-container .user-alert-icon {\n      width: 19%; }\n      #user-alert .user-message-container .user-alert-icon i {\n        font-size: 60px;\n        font-size: 6.12rem; }\n    #user-alert .user-message-container .message-text-container {\n      width: 75%;\n      margin-left: 2%; }\n  #user-alert .user-alert-footer .btn {\n    min-width: 100px; }\n  #user-alert .user-alert-footer .btn-close-confirm {\n    margin-right: 8px;\n    background-color: #E74C3C;\n    background-color: #E74C3C; }\n    #user-alert .user-alert-footer .btn-close-confirm:hover {\n      background-color: #e12e1c; }\n    #user-alert .user-alert-footer .btn-close-confirm:hover {\n      background-color: #e12e1c; }\n    #user-alert .user-alert-footer .btn-close-confirm:focus {\n      background-color: #e12e1c; }\n      #user-alert .user-alert-footer .btn-close-confirm:focus:hover {\n        background-color: #e12e1c; }\n\n.message-success,\n.message-failure,\n.message-info,\n.message-confirm {\n  position: fixed;\n  left: 22%;\n  top: 30%;\n  background-color: white;\n  border: 3px solid #555555;\n  -webkit-border-radius: 5px;\n  border-radius: 5px;\n  background-clip: padding-box;\n  /* stops bg color from leaking */\n  font-size: 14px;\n  font-size: 1.428rem;\n  color: #555555;\n  z-index: 9999;\n  width: 55%;\n  max-width: 600px; }\n  .message-success i,\n  .message-failure i,\n  .message-info i,\n  .message-confirm i {\n    font-size: 26px;\n    font-size: 2.652rem; }\n\n.message-info .btn-close-confirm {\n  background-color: #e6931c; }\n  .message-info .btn-close-confirm:hover {\n    background-color: #d18517; }\n  .message-info .btn-close-confirm:focus {\n    background-color: #d18517; }\n    .message-info .btn-close-confirm:focus:hover {\n      background-color: #d18517; }\n\n.message-success .btn-close-confirm {\n  background-color: #009DAD; }\n  .message-success .btn-close-confirm:hover {\n    background-color: #006f7a; }\n\n.message-success .close {\n  display: none; }\n", ""]);
+	exports.push([module.id, ".hide {\n  display: none; }\n\n#user-alert {\n  padding: 20px;\n  position: fixed;\n  left: 22%;\n  top: 30%;\n  background-color: white;\n  border: 3px solid #555555;\n  -webkit-border-radius: 5px;\n  border-radius: 5px;\n  background-clip: padding-box;\n  /* stops bg color from leaking */\n  font-size: 14px;\n  font-size: 1.428rem;\n  color: #555555;\n  z-index: 9999;\n  width: 55%;\n  max-width: 600px; }\n  #user-alert i {\n    font-size: 26px;\n    font-size: 2.652rem; }\n  #user-alert .close {\n    color: #555555;\n    position: absolute;\n    top: 10px;\n    right: 10px;\n    height: 45px;\n    width: 45px;\n    padding: 0;\n    background: white;\n    z-index: 9999999;\n    border: none; }\n    #user-alert .close:hover {\n      color: #E74C3C; }\n  #user-alert .user-message-container {\n    display: block;\n    width: 100%; }\n    #user-alert .user-message-container > div {\n      display: inline-block;\n      height: 100%;\n      vertical-align: middle; }\n      #user-alert .user-message-container > div:last-child {\n        padding-left: 0; }\n    #user-alert .user-message-container .user-alert-icon {\n      width: 19%; }\n      #user-alert .user-message-container .user-alert-icon i {\n        font-size: 60px;\n        font-size: 6.12rem; }\n    #user-alert .user-message-container .message-text-container {\n      width: 75%;\n      margin-left: 2%; }\n  #user-alert .user-alert-footer .btn {\n    min-width: 100px; }\n  #user-alert .user-alert-footer .btn-close-confirm {\n    margin-right: 8px;\n    background-color: #E74C3C;\n    background-color: #E74C3C; }\n    #user-alert .user-alert-footer .btn-close-confirm:hover {\n      background-color: #e12e1c; }\n    #user-alert .user-alert-footer .btn-close-confirm:hover {\n      background-color: #e12e1c; }\n    #user-alert .user-alert-footer .btn-close-confirm:focus {\n      background-color: #e12e1c; }\n      #user-alert .user-alert-footer .btn-close-confirm:focus:hover {\n        background-color: #e12e1c; }\n\n.message-info .user-alert-icon i {\n  color: #5bc0de; }\n\n.message-info .btn-close-confirm {\n  background-color: #e6931c; }\n  .message-info .btn-close-confirm:hover {\n    background-color: #d18517; }\n  .message-info .btn-close-confirm:focus {\n    background-color: #d18517; }\n    .message-info .btn-close-confirm:focus:hover {\n      background-color: #d18517; }\n\n.message-success .user-alert-icon i {\n  color: #51cf99; }\n\n.message-success .btn-close-confirm {\n  background-color: #009DAD; }\n  .message-success .btn-close-confirm:hover {\n    background-color: #006f7a; }\n\n.message-success .close {\n  display: none; }\n\n.message-confirm .user-alert-icon i {\n  color: #009DAD; }\n\n.message-warning .user-alert-icon i {\n  color: #f0ad4e; }\n\n.message-failure .user-alert-icon i {\n  color: #E74C3C; }\n", ""]);
 
 	// exports
 

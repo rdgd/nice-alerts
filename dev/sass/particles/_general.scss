@@ -6,6 +6,18 @@
 
 #user-alert {
   padding: 20px;
+  position: fixed;
+  left: 22%;
+  top: 30%;
+  background-color: white;
+  border: 3px solid $gray;
+  @include border-radius(5px);
+  @include font-size(14);
+  color: $gray;
+  z-index: 9999;
+  width: 55%;
+  max-width: 600px;
+  i { @include font-size(26); }
 
   .close {
     color: $gray;
@@ -66,25 +78,10 @@
   }
 }
 
-.message-success,
-.message-failure,
-.message-info,
-.message-confirm {
-  position: fixed;
-  left: 22%;
-  top: 30%;
-  background-color: white;
-  border: 3px solid $gray;
-  @include border-radius(5px);
-  @include font-size(14);
-  color: $gray;
-  z-index: 9999;
-  width: 55%;
-  max-width: 600px;
-  i { @include font-size(26); }
-}
-
 .message-info {
+  .user-alert-icon i {
+    color:$info;
+  }
   .btn-close-confirm {
     background-color: $fourth;
     &:hover {
@@ -100,6 +97,9 @@
 }
 
 .message-success {
+  .user-alert-icon i {
+    color:$green-flat;
+  }
   .btn-close-confirm {
     background-color: $primary;
     &:hover {
@@ -108,5 +108,23 @@
   }
   .close {
     display: none;
+  }
+}
+
+.message-confirm {
+  .user-alert-icon i {
+    color:$success;
+  }
+}
+
+.message-warning {
+  .user-alert-icon i {
+    color:$warning;
+  }
+}
+
+.message-failure {
+  .user-alert-icon i {
+    color:$danger;
   }
 }
