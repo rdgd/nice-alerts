@@ -1,12 +1,11 @@
 require('../sass/general.scss');
 
 var util = require('./util.js');
-var markup = require('../html/nice-alerts.html');
+var NiceAlertView = require('./exampleDependency.js');
 
-function UserAlert () {
+function NiceAlert () {
   this.options = {};
-  this._makeView();
-  this._selectElements();
+  this.view = new NiceAlertView();
   this.defaultOptions = {
     message: 'This is an alert!',
     type: 'info',
@@ -21,31 +20,14 @@ function UserAlert () {
   this._setHooks();
 }
 
-UserAlert.prototype = {
-  _makeView: function () {
-    this.alertContainer = document.createElement('div');
-    document.body.appendChild(this.alertContainer);
-    this.alertContainer.outerHTML = markup;
-  },
-
-  _selectElements: function () {
-    this.alertContainer = document.getElementById('user-alert');
-    this.icon = this.alertContainer.querySelector('.user-alert-icon i');
-    this.yesBtn = document.getElementById('btn-yes');
-    this.noBtn = document.getElementById('btn-no');
-    this.message = document.createElement('span');
-    this.messageContainer = this.alertContainer.querySelector('.user-alert-message');
-    this.closeBtn = this.alertContainer.querySelector('.close');
-    this.footer = this.alertContainer.querySelector('.user-alert-footer');
-  },
-
+NiceAlert.prototype = {
   _setHooks: function () {
-    this.closeBtn.addEventListener('click', this.hide.bind(this));
+    this.view.closeBtn.addEventListener('click', this.hide.bind(this));
     document.addEventListener('keydown', this.handleKeydown.bind(this));
   },
 
   handleKeydown:  function(evt) {
-    var alertIsVisible = !this.alertContainer.classList.contains('hide');
+    var alertIsVisible = !this.view.alertContainer.classList.contains('hide');
     evt = evt || window.event;
     if (evt.keyCode == 27 && alertIsVisible) {
       this.hide();
@@ -81,14 +63,14 @@ UserAlert.prototype = {
       case 'info': { break; }
       default: { break; }
     }
-    this.alertContainer.setAttribute('class', className);
-    this.icon.textContent = iconName;
+    this.view.alertContainer.setAttribute('class', className);
+    this.view.icon.textContent = iconName;
   },
 
   setMessage: function (msg) {
-    this.messageContainer.innerHTML = '';
-    this.message.innerHTML = msg;
-    this.messageContainer.appendChild(this.message);
+    this.view.messageContainer.innerHTML = '';
+    this.view.message.innerHTML = msg;
+    this.view.messageContainer.appendChild(this.view.message);
   },
 
   show: function (userOptions) {
@@ -98,17 +80,17 @@ UserAlert.prototype = {
     this.setMessage(this.options.message);
 
     if (this.options.type == 'confirm') {
-      this.footer.classList.remove('hide');
+      this.view.footer.classList.remove('hide');
       this.makeConfirm();
     } else {
-      this.footer.classList.add('hide');
+      this.view.footer.classList.add('hide');
     }
 
     if (this.options.duration === 0) {
-      this.closeBtn.classList.remove('hide');
-      util.fadeIn(this.alertContainer);
+      this.view.closeBtn.classList.remove('hide');
+      util.fadeIn(this.view.alertContainer);
     } else {
-      this.closeBtn.classList.add('hide');
+      this.view.closeBtn.classList.add('hide');
       util.fadeIn(this.alertContainer, function() {
         setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
       }.bind(this));
@@ -116,33 +98,31 @@ UserAlert.prototype = {
   },
 
   makeConfirm: function () {
-    this.noBtn.textContent = this.options.noText;
-    this.yesBtn.textContent = this.options.yesText;
+    this.view.noBtn.textContent = this.options.noText;
+    this.view.yesBtn.textContent = this.options.yesText;
 
     this.yesHandler = this.handleYesClick.bind(this);
     this.noHandler = this.handleNoClick.bind(this);
 
-    this.yesBtn.addEventListener('click', this.yesHandler);
-    this.noBtn.addEventListener('click', this.noHandler);
+    this.view.yesBtn.addEventListener('click', this.yesHandler);
+    this.view.noBtn.addEventListener('click', this.noHandler);
   },
 
   handleYesClick: function (e) {
     this.hide(this.options.closeHandler);
     if (this.options.yesHandler) { this.options.yesHandler(); }
-    this.yesBtn.removeEventListener('click', this.yesHandler);
+    this.view.yesBtn.removeEventListener('click', this.yesHandler);
   },
 
   handleNoClick: function (e) {
     this.hide(this.options.closeHandler);
     if (this.options.noHandler) { this.options.noHandler(); }
-    this.noBtn.removeEventListener('click', this.noHandler);
+    this.view.noBtn.removeEventListener('click', this.noHandler);
   },
 
   hide: function (callback) {
-    util.fadeOut(this.alertContainer, callback);
-    // R this.alertContainer.classList.add('hide');
-    // R if (typeof callback == 'function') { callback(); }
+    util.fadeOut(this.view.alertContainer, callback);
   }
 };
 
-window.UserAlert = new UserAlert();
+window.NiceAlert = new NiceAlert();
