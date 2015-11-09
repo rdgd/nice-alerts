@@ -107,34 +107,9 @@
   }
 }
 
-
 // Different color icons per alert type
-.message-info {
-  .user-alert-icon i {
-    color:$info;
-  }
-}
-
-.message-success {
-  .user-alert-icon i {
-    color:$green-flat;
-  }
-}
-
-.message-confirm {
-  .user-alert-icon i {
-    color:$teal;
-  }
-}
-
-.message-warning {
-  .user-alert-icon i {
-    color:$warning;
-  }
-}
-
-.message-failure {
-  .user-alert-icon i {
-    color:$danger;
-  }
-}
+.message-info .user-alert-icon i { color:$info; }
+.message-success .user-alert-icon i { color:$green-flat; }
+.message-confirm .user-alert-icon i { color:$teal; }
+.message-warning .user-alert-icon i { color:$warning; }
+.message-failure .user-alert-icon i { color:$danger; }

@@ -47,12 +47,11 @@
 	__webpack_require__(1);
 
 	var util = __webpack_require__(5);
-	var markup = __webpack_require__(6);
+	var NiceAlertView = __webpack_require__(6);
 
-	function UserAlert () {
+	function NiceAlert () {
 	  this.options = {};
-	  this._makeView();
-	  this._selectElements();
+	  this.view = new NiceAlertView();
 	  this.defaultOptions = {
 	    message: 'This is an alert!',
 	    type: 'info',
@@ -67,31 +66,14 @@
 	  this._setHooks();
 	}
 
-	UserAlert.prototype = {
-	  _makeView: function () {
-	    this.alertContainer = document.createElement('div');
-	    document.body.appendChild(this.alertContainer);
-	    this.alertContainer.outerHTML = markup;
-	  },
-
-	  _selectElements: function () {
-	    this.alertContainer = document.getElementById('user-alert');
-	    this.icon = this.alertContainer.querySelector('.user-alert-icon i');
-	    this.yesBtn = document.getElementById('btn-yes');
-	    this.noBtn = document.getElementById('btn-no');
-	    this.message = document.createElement('span');
-	    this.messageContainer = this.alertContainer.querySelector('.user-alert-message');
-	    this.closeBtn = this.alertContainer.querySelector('.close');
-	    this.footer = this.alertContainer.querySelector('.user-alert-footer');
-	  },
-
+	NiceAlert.prototype = {
 	  _setHooks: function () {
-	    this.closeBtn.addEventListener('click', this.hide.bind(this));
+	    this.view.closeBtn.addEventListener('click', this.hide.bind(this));
 	    document.addEventListener('keydown', this.handleKeydown.bind(this));
 	  },
 
 	  handleKeydown:  function(evt) {
-	    var alertIsVisible = !this.alertContainer.classList.contains('hide');
+	    var alertIsVisible = !this.view.alertContainer.classList.contains('hide');
 	    evt = evt || window.event;
 	    if (evt.keyCode == 27 && alertIsVisible) {
 	      this.hide();
@@ -127,14 +109,14 @@
 	      case 'info': { break; }
 	      default: { break; }
 	    }
-	    this.alertContainer.setAttribute('class', className);
-	    this.icon.textContent = iconName;
+	    this.view.alertContainer.setAttribute('class', className);
+	    this.view.icon.textContent = iconName;
 	  },
 
 	  setMessage: function (msg) {
-	    this.messageContainer.innerHTML = '';
-	    this.message.innerHTML = msg;
-	    this.messageContainer.appendChild(this.message);
+	    this.view.messageContainer.innerHTML = '';
+	    this.view.message.innerHTML = msg;
+	    this.view.messageContainer.appendChild(this.view.message);
 	  },
 
 	  show: function (userOptions) {
@@ -144,17 +126,17 @@
 	    this.setMessage(this.options.message);
 
 	    if (this.options.type == 'confirm') {
-	      this.footer.classList.remove('hide');
+	      this.view.footer.classList.remove('hide');
 	      this.makeConfirm();
 	    } else {
-	      this.footer.classList.add('hide');
+	      this.view.footer.classList.add('hide');
 	    }
 
 	    if (this.options.duration === 0) {
-	      this.closeBtn.classList.remove('hide');
-	      util.fadeIn(this.alertContainer);
+	      this.view.closeBtn.classList.remove('hide');
+	      util.fadeIn(this.view.alertContainer);
 	    } else {
-	      this.closeBtn.classList.add('hide');
+	      this.view.closeBtn.classList.add('hide');
 	      util.fadeIn(this.alertContainer, function() {
 	        setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
 	      }.bind(this));
@@ -162,36 +144,34 @@
 	  },
 
 	  makeConfirm: function () {
-	    this.noBtn.textContent = this.options.noText;
-	    this.yesBtn.textContent = this.options.yesText;
+	    this.view.noBtn.textContent = this.options.noText;
+	    this.view.yesBtn.textContent = this.options.yesText;
 
 	    this.yesHandler = this.handleYesClick.bind(this);
 	    this.noHandler = this.handleNoClick.bind(this);
 
-	    this.yesBtn.addEventListener('click', this.yesHandler);
-	    this.noBtn.addEventListener('click', this.noHandler);
+	    this.view.yesBtn.addEventListener('click', this.yesHandler);
+	    this.view.noBtn.addEventListener('click', this.noHandler);
 	  },
 
 	  handleYesClick: function (e) {
 	    this.hide(this.options.closeHandler);
 	    if (this.options.yesHandler) { this.options.yesHandler(); }
-	    this.yesBtn.removeEventListener('click', this.yesHandler);
+	    this.view.yesBtn.removeEventListener('click', this.yesHandler);
 	  },
 
 	  handleNoClick: function (e) {
 	    this.hide(this.options.closeHandler);
 	    if (this.options.noHandler) { this.options.noHandler(); }
-	    this.noBtn.removeEventListener('click', this.noHandler);
+	    this.view.noBtn.removeEventListener('click', this.noHandler);
 	  },
 
 	  hide: function (callback) {
-	    util.fadeOut(this.alertContainer, callback);
-	    // R this.alertContainer.classList.add('hide');
-	    // R if (typeof callback == 'function') { callback(); }
+	    util.fadeOut(this.view.alertContainer, callback);
 	  }
 	};
 
-	window.UserAlert = new UserAlert();
+	window.NiceAlert = new NiceAlert();
 
 
 /***/ },
@@ -603,6 +583,39 @@
 
 /***/ },
 /* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var markup = __webpack_require__(7);
+
+	function NiceAlertView () {
+	  this._makeView();
+	  this._selectElements();
+	}
+
+	NiceAlertView.prototype = {
+	  _makeView: function () {
+	    this.alertContainer = document.createElement('div');
+	    document.body.appendChild(this.alertContainer);
+	    this.alertContainer.outerHTML = markup;
+	  },
+
+	  _selectElements: function () {
+	    this.alertContainer = document.getElementById('user-alert');
+	    this.icon = this.alertContainer.querySelector('.user-alert-icon i');
+	    this.yesBtn = document.getElementById('btn-yes');
+	    this.noBtn = document.getElementById('btn-no');
+	    this.message = document.createElement('span');
+	    this.messageContainer = this.alertContainer.querySelector('.user-alert-message');
+	    this.closeBtn = this.alertContainer.querySelector('.close');
+	    this.footer = this.alertContainer.querySelector('.user-alert-footer');
+	  }
+	};
+
+	module.exports = NiceAlertView;
+
+
+/***/ },
+/* 7 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"user-alert\" class=\"hide\">\n  <section class=\"user-message-container\">\n    <div class=\"user-alert-icon text-center\">\n      <i class=\"material-icons\">info</i>\n    </div>\n    <div class=\"message-text-container text-left\">\n      <div class=\"user-alert-message\"></div>\n    </div>\n    <div class=\"close text-right\"><i class=\"material-icons\">clear</i></div>\n  </section>\n  <section class=\"user-alert-footer\">\n    <div class=\"text-right\">\n      <hr>\n      <div class=\"btn-wrapper\">\n        <button id=\"btn-yes\" class=\"btn\"></button>\n      </div>\n      <div class=\"btn-wrapper\">\n        <button id=\"btn-no\" class=\"btn\"></button>\n      </div>\n    </div>\n  </section>\n</div>\n";
