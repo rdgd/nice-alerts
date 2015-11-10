@@ -57,10 +57,7 @@ body {
 
   .user-alert-footer {
     text-align: right;
-    hr {
-      margin-top: 20px;
-      margin-bottom: 20px;
-    }
+    margin-top: 20px;
     .btn-wrapper {
       width: 30%;
       min-width: 125px;
@@ -70,6 +67,9 @@ body {
         height: 50px;
         border: none;
         cursor: pointer;
+        color: white;
+        text-transform: uppercase;
+        font-weight: 500;
         @include font-size(10);
         @include border-radius(3px);
         @include transition(background-color, 200ms, ease-in-out);
@@ -168,23 +168,35 @@ body {
 @media
 (-webkit-min-device-pixel-ratio: 2),
 (min-resolution: 192dpi), (max-width: 475px) {
+  #user-alert .user-message-container .message-text-container {
+    width: 90%;
+  }
   .user-alert-footer {
     text-align: center !important;
   }
   .btn-wrapper {
     display: block !important;
     width: 100% !important;
+    .btn {
+      width: 100% !important;
+    }
   }
   #btn-yes { margin-bottom: 10px; }
 }
 
 @media (max-width: 240px) {
+  #user-alert .user-message-container .message-text-container {
+    width: 90%;
+  }
   .user-alert-footer {
     text-align: center !important;
   }
   .btn-wrapper {
     display: block !important;
     width: 100% !important;
+    .btn {
+      width: 100% !important;
+    }
   }
   #btn-yes { margin-bottom: 10px; }
 }
