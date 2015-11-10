@@ -1,0 +1,29 @@
+{
+  "name": "nice-alerts",
+  "description": "Native alerts/confirms/etc... are ugly and not robust. This aims to be an improvement, and add some additional functionality.",
+  "main": "dist/nice-alerts.min.js",
+  "authors": [
+    "Ryan Gray"
+  ],
+  "license": "WTFPL",
+  "keywords": [
+    "dialog",
+    "alert",
+    "confirm",
+    "prompt",
+    "modal"
+  ],
+  "homepage": "https://github.com/rdgd/nice-alerts",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rdgd/nice-alerts.git"
+  },
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
