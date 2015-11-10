@@ -16,14 +16,23 @@ function NiceAlert () {
     yesText: 'Yes',
     noText: 'No'
   };
-
-  this._setHooks();
 }
 
 NiceAlert.prototype = {
   _setHooks: function () {
-    this.view.closeBtn.addEventListener('click', this.hide.bind(this));
-    document.addEventListener('keydown', this.handleKeydown.bind(this));
+    this.hideHandler = this.hide.bind(this);
+    this.keydownHandler = this.handleKeydown.bind(this);
+    this.view.closeBtn.addEventListener('click', this.hideHandler);
+    document.addEventListener('keydown', this.keydownHandler);
+  },
+
+  _setConfirmHooks: function () {
+    this.view.yesBtn.addEventListener('click', this.yesHandler);
+    this.view.noBtn.addEventListener('click', this.noHandler);
+  },
+  _removeConfirmHooks: function () {
+    this.view.yesBtn.removeEventListener('click', this.yesHandler);
+    this.view.noBtn.removeEventListener('click', this.noHandler);
   },
 
   handleKeydown:  function(evt) {
@@ -74,6 +83,7 @@ NiceAlert.prototype = {
   },
 
   show: function (userOptions) {
+    this._setHooks();
     this.options = {};
     util.extend(this.options, this.defaultOptions, userOptions);
     this.setContainerClass(this.options.type);
@@ -91,7 +101,7 @@ NiceAlert.prototype = {
       util.fadeIn(this.view.alertContainer);
     } else {
       this.view.closeBtn.classList.add('hide');
-      util.fadeIn(this.alertContainer, function() {
+      util.fadeIn(this.view.alertContainer, function() {
         setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
       }.bind(this));
     }
@@ -104,24 +114,26 @@ NiceAlert.prototype = {
     this.yesHandler = this.handleYesClick.bind(this);
     this.noHandler = this.handleNoClick.bind(this);
 
-    this.view.yesBtn.addEventListener('click', this.yesHandler);
-    this.view.noBtn.addEventListener('click', this.noHandler);
+    this._setConfirmHooks();
   },
 
   handleYesClick: function (e) {
-    this.hide(this.options.closeHandler);
-    if (this.options.yesHandler) { this.options.yesHandler(); }
-    this.view.yesBtn.removeEventListener('click', this.yesHandler);
+    this.hide(function () {
+      this.options.closeHandler();
+      if (this.options.yesHandler) { this.options.yesHandler(); }
+    }.bind(this));
   },
 
   handleNoClick: function (e) {
-    this.hide(this.options.closeHandler);
-    if (this.options.noHandler) { this.options.noHandler(); }
-    this.view.noBtn.removeEventListener('click', this.noHandler);
+    this.hide(function () {
+      this.options.closeHandler();
+      if (this.options.noHandler) { this.options.noHandler(); }
+    }.bind(this));
   },
 
   hide: function (callback) {
     util.fadeOut(this.view.alertContainer, callback);
+    this._removeConfirmHooks();
   }
 };
 
