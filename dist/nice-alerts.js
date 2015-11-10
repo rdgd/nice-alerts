@@ -44,146 +44,12 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/*
+	  Main point of entry for webpack. Exists primarily because of separation of style from
+	  code to be unit tested.
+	*/
 	__webpack_require__(1);
-
-	var util = __webpack_require__(5);
-	var NiceAlertView = __webpack_require__(6);
-
-	function NiceAlert () {
-	  this.options = {};
-	  this.view = new NiceAlertView();
-	  this.defaultOptions = {
-	    message: 'This is an alert!',
-	    type: 'info',
-	    duration: 0,
-	    closeHandler: null,
-	    yesHandler: null,
-	    noHandler: null,
-	    yesText: 'Yes',
-	    noText: 'No'
-	  };
-	}
-
-	NiceAlert.prototype = {
-	  _setHooks: function () {
-	    this.hideHandler = this.hide.bind(this);
-	    this.keydownHandler = this.handleKeydown.bind(this);
-	    this.view.closeBtn.addEventListener('click', this.hideHandler);
-	    document.addEventListener('keydown', this.keydownHandler);
-	  },
-
-	  _setConfirmHooks: function () {
-	    this.view.yesBtn.addEventListener('click', this.yesHandler);
-	    this.view.noBtn.addEventListener('click', this.noHandler);
-	  },
-	  _removeConfirmHooks: function () {
-	    this.view.yesBtn.removeEventListener('click', this.yesHandler);
-	    this.view.noBtn.removeEventListener('click', this.noHandler);
-	  },
-
-	  handleKeydown:  function(evt) {
-	    var alertIsVisible = !this.view.alertContainer.classList.contains('hide');
-	    evt = evt || window.event;
-	    if (evt.keyCode == 27 && alertIsVisible) {
-	      this.hide();
-	    }
-	  },
-
-	  setContainerClass: function (alertType) {
-	    // Defaults
-	    var className = 'message-info';
-	    var iconName = 'info';
-
-	    switch (alertType) {
-	      case 'success': {
-	        className = 'message-success';
-	        iconName = 'check_circle';
-	        break;
-	      }
-	      case 'failure': {
-	        className = 'message-failure';
-	        iconName = 'error';
-	        break;
-	      }
-	      case 'warning': {
-	        className = 'message-warning';
-	        iconName = 'warning';
-	        break;
-	      }
-	      case 'confirm': {
-	        className = 'message-confirm';
-	        iconName = 'question_answer';
-	        break;
-	      }
-	      case 'info': { break; }
-	      default: { break; }
-	    }
-	    this.view.alertContainer.setAttribute('class', className);
-	    this.view.icon.textContent = iconName;
-	  },
-
-	  setMessage: function (msg) {
-	    this.view.messageContainer.innerHTML = '';
-	    this.view.message.innerHTML = msg;
-	    this.view.messageContainer.appendChild(this.view.message);
-	  },
-
-	  show: function (userOptions) {
-	    this._setHooks();
-	    this.options = {};
-	    util.extend(this.options, this.defaultOptions, userOptions);
-	    this.setContainerClass(this.options.type);
-	    this.setMessage(this.options.message);
-
-	    if (this.options.type == 'confirm') {
-	      this.view.footer.classList.remove('hide');
-	      this.makeConfirm();
-	    } else {
-	      this.view.footer.classList.add('hide');
-	    }
-
-	    if (this.options.duration === 0) {
-	      this.view.closeBtn.classList.remove('hide');
-	      util.fadeIn(this.view.alertContainer);
-	    } else {
-	      this.view.closeBtn.classList.add('hide');
-	      util.fadeIn(this.view.alertContainer, function() {
-	        setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
-	      }.bind(this));
-	    }
-	  },
-
-	  makeConfirm: function () {
-	    this.view.noBtn.textContent = this.options.noText;
-	    this.view.yesBtn.textContent = this.options.yesText;
-
-	    this.yesHandler = this.handleYesClick.bind(this);
-	    this.noHandler = this.handleNoClick.bind(this);
-
-	    this._setConfirmHooks();
-	  },
-
-	  handleYesClick: function (e) {
-	    this.hide(function () {
-	      this.options.closeHandler();
-	      if (this.options.yesHandler) { this.options.yesHandler(); }
-	    }.bind(this));
-	  },
-
-	  handleNoClick: function (e) {
-	    this.hide(function () {
-	      this.options.closeHandler();
-	      if (this.options.noHandler) { this.options.noHandler(); }
-	    }.bind(this));
-	  },
-
-	  hide: function (callback) {
-	    util.fadeOut(this.view.alertContainer, callback);
-	    this._removeConfirmHooks();
-	  }
-	};
-
-	window.NiceAlert = new NiceAlert();
+	var NiceAlert = __webpack_require__(5);
 
 
 /***/ },
@@ -221,7 +87,7 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/icon?family=Material+Icons);", ""]);
 
 	// module
-	exports.push([module.id, "html, body {\n  font-family: \"droid_sans\", Helvetica-, Arial, sans-serif; }\n\n.hide {\n  display: none; }\n\n.text-right {\n  text-align: right; }\n\n.text-center {\n  text-align: center; }\n\n.text-left {\n  text-align: left; }\n\nbody {\n  background: aquamarine; }\n\n#user-alert {\n  padding: 20px;\n  position: fixed;\n  left: 22%;\n  top: 30%;\n  background-color: white;\n  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);\n  -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);\n  -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);\n  -webkit-border-radius: 5px;\n  border-radius: 5px;\n  background-clip: padding-box;\n  /* stops bg color from leaking */\n  font-size: 14px;\n  font-size: 1.428rem;\n  color: #555555;\n  z-index: 100;\n  width: 55%;\n  max-width: 650px !important; }\n  #user-alert i {\n    font-size: 26px;\n    font-size: 2.652rem; }\n  #user-alert .close {\n    color: #555555;\n    position: absolute;\n    top: 10px;\n    right: 10px;\n    height: 45px !important;\n    width: 45px;\n    padding: 0;\n    background: white;\n    z-index: 200;\n    cursor: pointer;\n    -webkit-transition: color 200ms ease-in-out;\n    -moz-transition: color 200ms ease-in-out;\n    -ms-transition: color 200ms ease-in-out;\n    -o-transition: color 200ms ease-in-out;\n    transition: color 200ms ease-in-out; }\n    #user-alert .close:hover {\n      color: #E74C3C; }\n  #user-alert .user-message-container {\n    display: block;\n    width: 100%; }\n    #user-alert .user-message-container > .user-alert-icon, #user-alert .user-message-container .message-text-container {\n      display: inline-block;\n      height: 100%;\n      vertical-align: middle; }\n      #user-alert .user-message-container > .user-alert-icon:last-child, #user-alert .user-message-container .message-text-container:last-child {\n        padding-left: 0; }\n    #user-alert .user-message-container .user-alert-icon {\n      width: 19%; }\n      #user-alert .user-message-container .user-alert-icon i {\n        font-size: 60px;\n        font-size: 6.12rem; }\n    #user-alert .user-message-container .message-text-container {\n      width: 75%; }\n  #user-alert .user-alert-footer {\n    text-align: right; }\n    #user-alert .user-alert-footer hr {\n      margin-top: 20px;\n      margin-bottom: 20px; }\n    #user-alert .user-alert-footer .btn-wrapper {\n      width: 30%;\n      min-width: 125px;\n      display: inline-block; }\n      #user-alert .user-alert-footer .btn-wrapper .btn {\n        width: 90%;\n        height: 50px;\n        border: none;\n        cursor: pointer;\n        color: white;\n        text-transform: uppercase;\n        font-weight: 500;\n        font-size: 10px;\n        font-size: 1.02rem;\n        -webkit-border-radius: 3px;\n        border-radius: 3px;\n        background-clip: padding-box;\n        /* stops bg color from leaking */\n        -webkit-transition: background-color 200ms ease-in-out;\n        -moz-transition: background-color 200ms ease-in-out;\n        -ms-transition: background-color 200ms ease-in-out;\n        -o-transition: background-color 200ms ease-in-out;\n        transition: background-color 200ms ease-in-out;\n        -webkit-transition: box-shadow 200ms ease-in-out;\n        -moz-transition: box-shadow 200ms ease-in-out;\n        -ms-transition: box-shadow 200ms ease-in-out;\n        -o-transition: box-shadow 200ms ease-in-out;\n        transition: box-shadow 200ms ease-in-out;\n        -webkit-transition: -moz-box-shadow 200ms ease-in-out;\n        -moz-transition: -moz-box-shadow 200ms ease-in-out;\n        -ms-transition: -moz-box-shadow 200ms ease-in-out;\n        -o-transition: -moz-box-shadow 200ms ease-in-out;\n        transition: -moz-box-shadow 200ms ease-in-out;\n        -webkit-transition: -webkit-box-shadow 200ms ease-in-out;\n        -moz-transition: -webkit-box-shadow 200ms ease-in-out;\n        -ms-transition: -webkit-box-shadow 200ms ease-in-out;\n        -o-transition: -webkit-box-shadow 200ms ease-in-out;\n        transition: -webkit-box-shadow 200ms ease-in-out; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-no {\n        background-color: #e12e1c; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-no:hover {\n          background-color: #E74C3C;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-no:focus {\n          background-color: #E74C3C;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n          #user-alert .user-alert-footer .btn-wrapper #btn-no:focus:hover {\n            background-color: #E74C3C;\n            -webkit-box-shadow: 0px 1px 3px #131313;\n            -moz-box-shadow: 0px 1px 3px #131313;\n            box-shadow: 0px 1px 3px #131313; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-yes {\n        background-color: #33ba80; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-yes:hover {\n          background-color: #51cf99;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-yes:focus {\n          background-color: #51cf99;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n          #user-alert .user-alert-footer .btn-wrapper #btn-yes:focus:hover {\n            background-color: #51cf99;\n            -webkit-box-shadow: 0px 1px 3px #131313;\n            -moz-box-shadow: 0px 1px 3px #131313;\n            box-shadow: 0px 1px 3px #131313; }\n\n.message-info .user-alert-icon i {\n  color: #5bc0de; }\n\n.message-success .user-alert-icon i {\n  color: #51cf99; }\n\n.message-confirm .user-alert-icon i {\n  color: #009DAD; }\n\n.message-warning .user-alert-icon i {\n  color: #f0ad4e; }\n\n.message-failure .user-alert-icon i {\n  color: #E74C3C; }\n\n@media (max-width: 440px) {\n  #user-alert {\n    left: 19%; }\n  .message-text-container {\n    display: block !important;\n    margin: auto;\n    text-align: center !important; }\n  .user-alert-icon {\n    margin: 10px auto !important;\n    width: 100% !important; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    width: 45% !important; } }\n\n@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (max-width: 875px) {\n  #user-alert {\n    left: 19%; }\n  .message-text-container {\n    display: block !important;\n    margin: auto;\n    text-align: center !important; }\n  .user-alert-icon {\n    margin: 10px auto !important;\n    width: 100% !important; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    width: 45% !important; } }\n\n@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (max-width: 475px) {\n  #user-alert .user-message-container .message-text-container {\n    width: 90%; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    display: block !important;\n    width: 100% !important; }\n    .btn-wrapper .btn {\n      width: 100% !important; }\n  #btn-yes {\n    margin-bottom: 10px; } }\n\n@media (max-width: 240px) {\n  #user-alert .user-message-container .message-text-container {\n    width: 90%; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    display: block !important;\n    width: 100% !important; }\n    .btn-wrapper .btn {\n      width: 100% !important; }\n  #btn-yes {\n    margin-bottom: 10px; } }\n", ""]);
+	exports.push([module.id, "html, body {\n  font-family: \"droid_sans\", Helvetica-, Arial, sans-serif; }\n\n.hide {\n  display: none; }\n\n.text-right {\n  text-align: right; }\n\n.text-center {\n  text-align: center; }\n\n.text-left {\n  text-align: left; }\n\nbody {\n  background: aquamarine; }\n\n#user-alert {\n  padding: 20px;\n  position: fixed;\n  left: 22%;\n  top: 30%;\n  background-color: white;\n  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);\n  -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);\n  -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);\n  -webkit-border-radius: 5px;\n  border-radius: 5px;\n  background-clip: padding-box;\n  /* stops bg color from leaking */\n  font-size: 14px;\n  font-size: 1.428rem;\n  color: #555555;\n  z-index: 100;\n  width: 55%;\n  max-width: 650px !important; }\n  #user-alert i {\n    font-size: 26px;\n    font-size: 2.652rem; }\n  #user-alert .close {\n    color: #555555;\n    position: absolute;\n    top: 10px;\n    right: 10px;\n    height: 45px !important;\n    width: 45px;\n    padding: 0;\n    background: white;\n    z-index: 200;\n    cursor: pointer;\n    -webkit-transition: color 200ms ease-in-out;\n    -moz-transition: color 200ms ease-in-out;\n    -ms-transition: color 200ms ease-in-out;\n    -o-transition: color 200ms ease-in-out;\n    transition: color 200ms ease-in-out; }\n    #user-alert .close:hover {\n      color: #E74C3C; }\n  #user-alert .user-message-container {\n    display: block;\n    width: 100%; }\n    #user-alert .user-message-container > .user-alert-icon, #user-alert .user-message-container .message-text-container {\n      display: inline-block;\n      height: 100%;\n      vertical-align: middle; }\n      #user-alert .user-message-container > .user-alert-icon:last-child, #user-alert .user-message-container .message-text-container:last-child {\n        padding-left: 0; }\n    #user-alert .user-message-container .user-alert-icon {\n      width: 19%; }\n      #user-alert .user-message-container .user-alert-icon i {\n        font-size: 60px;\n        font-size: 6.12rem; }\n    #user-alert .user-message-container .message-text-container {\n      width: 75%; }\n  #user-alert .user-alert-footer {\n    text-align: right;\n    margin-top: 20px; }\n    #user-alert .user-alert-footer .btn-wrapper {\n      width: 30%;\n      min-width: 125px;\n      display: inline-block; }\n      #user-alert .user-alert-footer .btn-wrapper .btn {\n        width: 90%;\n        height: 50px;\n        border: none;\n        cursor: pointer;\n        color: white;\n        text-transform: uppercase;\n        font-weight: 500;\n        font-size: 10px;\n        font-size: 1.02rem;\n        -webkit-border-radius: 3px;\n        border-radius: 3px;\n        background-clip: padding-box;\n        /* stops bg color from leaking */\n        -webkit-transition: background-color 200ms ease-in-out;\n        -moz-transition: background-color 200ms ease-in-out;\n        -ms-transition: background-color 200ms ease-in-out;\n        -o-transition: background-color 200ms ease-in-out;\n        transition: background-color 200ms ease-in-out;\n        -webkit-transition: box-shadow 200ms ease-in-out;\n        -moz-transition: box-shadow 200ms ease-in-out;\n        -ms-transition: box-shadow 200ms ease-in-out;\n        -o-transition: box-shadow 200ms ease-in-out;\n        transition: box-shadow 200ms ease-in-out;\n        -webkit-transition: -moz-box-shadow 200ms ease-in-out;\n        -moz-transition: -moz-box-shadow 200ms ease-in-out;\n        -ms-transition: -moz-box-shadow 200ms ease-in-out;\n        -o-transition: -moz-box-shadow 200ms ease-in-out;\n        transition: -moz-box-shadow 200ms ease-in-out;\n        -webkit-transition: -webkit-box-shadow 200ms ease-in-out;\n        -moz-transition: -webkit-box-shadow 200ms ease-in-out;\n        -ms-transition: -webkit-box-shadow 200ms ease-in-out;\n        -o-transition: -webkit-box-shadow 200ms ease-in-out;\n        transition: -webkit-box-shadow 200ms ease-in-out; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-no {\n        background-color: #e12e1c; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-no:hover {\n          background-color: #E74C3C;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-no:focus {\n          background-color: #E74C3C;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n          #user-alert .user-alert-footer .btn-wrapper #btn-no:focus:hover {\n            background-color: #E74C3C;\n            -webkit-box-shadow: 0px 1px 3px #131313;\n            -moz-box-shadow: 0px 1px 3px #131313;\n            box-shadow: 0px 1px 3px #131313; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-yes {\n        background-color: #33ba80; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-yes:hover {\n          background-color: #51cf99;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-yes:focus {\n          background-color: #51cf99;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n          #user-alert .user-alert-footer .btn-wrapper #btn-yes:focus:hover {\n            background-color: #51cf99;\n            -webkit-box-shadow: 0px 1px 3px #131313;\n            -moz-box-shadow: 0px 1px 3px #131313;\n            box-shadow: 0px 1px 3px #131313; }\n\n.message-info .user-alert-icon i {\n  color: #5bc0de; }\n\n.message-success .user-alert-icon i {\n  color: #51cf99; }\n\n.message-confirm .user-alert-icon i {\n  color: #009DAD; }\n\n.message-warning .user-alert-icon i {\n  color: #f0ad4e; }\n\n.message-failure .user-alert-icon i {\n  color: #E74C3C; }\n\n@media (max-width: 440px) {\n  #user-alert {\n    left: 19%; }\n  .message-text-container {\n    display: block !important;\n    margin: auto;\n    text-align: center !important; }\n  .user-alert-icon {\n    margin: 10px auto !important;\n    width: 100% !important; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    width: 45% !important; } }\n\n@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (max-width: 875px) {\n  #user-alert {\n    left: 19%; }\n  .message-text-container {\n    display: block !important;\n    margin: auto;\n    text-align: center !important; }\n  .user-alert-icon {\n    margin: 10px auto !important;\n    width: 100% !important; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    width: 45% !important; } }\n\n@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (max-width: 475px) {\n  #user-alert .user-message-container .message-text-container {\n    width: 90%; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    display: block !important;\n    width: 100% !important; }\n    .btn-wrapper .btn {\n      width: 100% !important; }\n  #btn-yes {\n    margin-bottom: 10px; } }\n\n@media (max-width: 240px) {\n  #user-alert .user-message-container .message-text-container {\n    width: 90%; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    display: block !important;\n    width: 100% !important; }\n    .btn-wrapper .btn {\n      width: 100% !important; }\n  #btn-yes {\n    margin-bottom: 10px; } }\n", ""]);
 
 	// exports
 
@@ -538,6 +404,117 @@
 
 /***/ },
 /* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var util = __webpack_require__(6);
+	var NiceAlertView = __webpack_require__(7);
+
+	function NiceAlert () {
+	  this.options = {};
+	  this.view = new NiceAlertView();
+	  this.defaultOptions = {
+	    message: 'This is an alert!',
+	    type: 'info',
+	    duration: 0,
+	    closeHandler: null,
+	    yesHandler: null,
+	    noHandler: null,
+	    yesText: 'Yes',
+	    noText: 'No'
+	  };
+	  this._setHooks();
+	}
+
+	NiceAlert.prototype = {
+	  // May be called many times
+	  _setHooks: function () {
+	    this.hideHandler = this.hide.bind(this);
+	    this.keydownHandler = this.handleKeydown.bind(this);
+	    document.addEventListener('keydown', this.keydownHandler);
+	  },
+
+	  _setConfirmHooks: function () {
+	    this.view.yesBtn.addEventListener('click', this.yesHandler);
+	    this.view.noBtn.addEventListener('click', this.noHandler);
+	  },
+	  _removeConfirmHooks: function () {
+	    this.view.yesBtn.removeEventListener('click', this.yesHandler);
+	    this.view.noBtn.removeEventListener('click', this.noHandler);
+	  },
+
+	  handleKeydown:  function(evt) {
+	    var alertIsVisible = !this.view.alertContainer.classList.contains('hide');
+	    evt = evt || window.event;
+	    if (evt.keyCode == 27 && alertIsVisible) { this.hide(); }
+	  },
+
+	  setMessage: function (msg) {
+	    this.view.messageContainer.innerHTML = '';
+	    this.view.message.innerHTML = msg;
+	    this.view.messageContainer.appendChild(this.view.message);
+	  },
+
+	  show: function (userOptions) {
+	    this.view.closeBtn.addEventListener('click', this.hideHandler);
+	    this.options = {};
+	    util.extend(this.options, this.defaultOptions, userOptions);
+	    this.view.setContainerClass(this.options.type);
+	    this.setMessage(this.options.message);
+
+	    if (this.options.type == 'confirm') {
+	      this.view.footer.classList.remove('hide');
+	      this.makeConfirm();
+	    } else {
+	      this.view.footer.classList.add('hide');
+	    }
+
+	    if (this.options.duration === 0) {
+	      this.view.closeBtn.classList.remove('hide');
+	      util.fadeIn(this.view.alertContainer);
+	    } else {
+	      this.view.closeBtn.classList.add('hide');
+	      util.fadeIn(this.view.alertContainer, function() {
+	        setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
+	      }.bind(this));
+	    }
+	  },
+
+	  makeConfirm: function () {
+	    this.view.noBtn.textContent = this.options.noText;
+	    this.view.yesBtn.textContent = this.options.yesText;
+
+	    this.yesHandler = this.handleYesClick.bind(this);
+	    this.noHandler = this.handleNoClick.bind(this);
+
+	    this._setConfirmHooks();
+	  },
+
+	  handleYesClick: function (e) {
+	    this.hide(function () {
+	      this.options.closeHandler();
+	      if (this.options.yesHandler) { this.options.yesHandler(); }
+	    }.bind(this));
+	  },
+
+	  handleNoClick: function (e) {
+	    this.hide(function () {
+	      this.options.closeHandler();
+	      if (this.options.noHandler) { this.options.noHandler(); }
+	    }.bind(this));
+	  },
+
+	  hide: function (callback) {
+	    util.fadeOut(this.view.alertContainer, callback);
+	    this._removeConfirmHooks();
+	    this.view.closeBtn.removeEventListener('click', this.hideHandler);
+	  }
+	};
+
+	window.NiceAlert = new NiceAlert();
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -594,43 +571,112 @@
 
 
 /***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var markup = __webpack_require__(7);
+/* 7 */
+/***/ function(module, exports) {
 
 	function NiceAlertView () {
 	  this._makeView();
-	  this._selectElements();
 	}
 
 	NiceAlertView.prototype = {
 	  _makeView: function () {
+	    // Create elements
 	    this.alertContainer = document.createElement('div');
+	    var userMessageContainer = document.createElement('section');
+	    var userAlertIconWrap = document.createElement('div');
+	    this.icon = document.createElement('i');
+	    var messageTextContainer = document.createElement('div');
+	    this.messageContainer = document.createElement('div');
+	    this.closeBtn = document.createElement('div');
+	    var closeBtnIcon = document.createElement('i');
+	    this.footer = document.createElement('div');
+	    var yesBtnWrap = document.createElement('div');
+	    this.yesBtn = document.createElement('button');
+	    var noBtnWrap = document.createElement('div');
+	    this.noBtn = document.createElement('button');
+	    this.message = document.createElement('span');
+
+	    // Assign ID's
+	    this.alertContainer.id = 'user-alert';
+	    this.yesBtn.id = 'btn-yes';
+	    this.noBtn.id = 'btn-no';
+
+	    // Add classes
+	    this.alertContainer.classList.add('hide');
+	    userMessageContainer.classList.add('user-message-container');
+	    userAlertIconWrap.classList.add('user-alert-icon');
+	    userAlertIconWrap.classList.add('text-center');
+	    this.icon.classList.add('material-icons');
+	    messageTextContainer.classList.add('message-text-container');
+	    messageTextContainer.classList.add('text-left');
+	    this.messageContainer.classList.add('user-alert-message');
+	    this.closeBtn.classList.add('close');
+	    this.closeBtn.classList.add('text-right');
+	    closeBtnIcon.classList.add('material-icons');
+	    this.footer.classList.add('user-alert-footer');
+	    yesBtnWrap.classList.add('btn-wrapper');
+	    noBtnWrap.classList.add('btn-wrapper');
+	    this.yesBtn.classList.add('btn');
+	    this.noBtn.classList.add('btn');
+
+	    // Add innerHTML
+	    this.icon.innerHTML = 'info';
+	    closeBtnIcon.innerHTML = 'clear';
+
+	    // Append together all of the pieces
+	    this.alertContainer.appendChild(userMessageContainer);
+	    userMessageContainer.appendChild(userAlertIconWrap);
+	    userAlertIconWrap.appendChild(this.icon);
+	    userMessageContainer.appendChild(messageTextContainer);
+	    messageTextContainer.appendChild(this.messageContainer);
+	    userMessageContainer.appendChild(this.closeBtn);
+	    this.closeBtn.appendChild(closeBtnIcon);
+	    this.alertContainer.appendChild(this.footer);
+	    this.footer.appendChild(yesBtnWrap);
+	    yesBtnWrap.appendChild(this.yesBtn);
+	    this.footer.appendChild(noBtnWrap);
+	    noBtnWrap.appendChild(this.noBtn);
+
+	    // Now on page
 	    document.body.appendChild(this.alertContainer);
-	    this.alertContainer.outerHTML = markup;
 	  },
 
-	  _selectElements: function () {
-	    this.alertContainer = document.getElementById('user-alert');
-	    this.icon = this.alertContainer.querySelector('.user-alert-icon i');
-	    this.yesBtn = document.getElementById('btn-yes');
-	    this.noBtn = document.getElementById('btn-no');
-	    this.message = document.createElement('span');
-	    this.messageContainer = this.alertContainer.querySelector('.user-alert-message');
-	    this.closeBtn = this.alertContainer.querySelector('.close');
-	    this.footer = this.alertContainer.querySelector('.user-alert-footer');
+	  setContainerClass: function (alertType) {
+	    // Defaults
+	    var className = 'message-info';
+	    var iconName = 'info';
+
+	    switch (alertType) {
+	      case 'success': {
+	        className = 'message-success';
+	        iconName = 'check_circle';
+	        break;
+	      }
+	      case 'failure': {
+	        className = 'message-failure';
+	        iconName = 'error';
+	        break;
+	      }
+	      case 'warning': {
+	        className = 'message-warning';
+	        iconName = 'warning';
+	        break;
+	      }
+	      case 'confirm': {
+	        className = 'message-confirm';
+	        iconName = 'question_answer';
+	        break;
+	      }
+	      case 'info': { break; }
+	      default: { break; }
+	    }
+	    this.alertContainer.setAttribute('class', className);
+	    this.icon.textContent = iconName;
 	  }
 	};
 
 	module.exports = NiceAlertView;
 
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	module.exports = "<div id=\"user-alert\" class=\"hide\">\n  <section class=\"user-message-container\">\n    <div class=\"user-alert-icon text-center\">\n      <i class=\"material-icons\">info</i>\n    </div>\n    <div class=\"message-text-container text-left\">\n      <div class=\"user-alert-message\"></div>\n    </div>\n    <div class=\"close text-right\"><i class=\"material-icons\">clear</i></div>\n  </section>\n  <section class=\"user-alert-footer\">\n    <div class=\"btn-wrapper\">\n      <button id=\"btn-yes\" class=\"btn\"></button>\n    </div>\n    <div class=\"btn-wrapper\">\n      <button id=\"btn-no\" class=\"btn\"></button>\n    </div>\n  </section>\n</div>\n";
 
 /***/ }
 /******/ ]);
