@@ -1,7 +1,7 @@
 require('../sass/general.scss');
 
 var util = require('./util.js');
-var NiceAlertView = require('./exampleDependency.js');
+var NiceAlertView = require('./NiceAlertView.js');
 
 function NiceAlert () {
   this.options = {};
