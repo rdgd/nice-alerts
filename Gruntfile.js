@@ -66,10 +66,15 @@ module.exports = function(grunt) {
         }
       }
     },
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js'
+      }
+    },
     watch: {
       all: {
         files: ['dev/**/*.js', 'dev/sass/*.scss', 'dev/sass/**/*.scss'],
-        tasks: ['jshint', 'jscs', 'webpack:all', 'uglify:all'],
+        tasks: ['jshint', 'jscs', 'karma:unit', 'webpack:all', 'uglify:all'],
         options: {
           spawn: false,
         }
@@ -84,5 +89,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-notify');
-  grunt.registerTask('default', ['jshint', 'jscs', 'webpack:all', 'uglify:all']);
+  grunt.registerTask('default', ['jshint', 'jscs', 'karma:unit', 'webpack:all', 'uglify:all']);
 };
