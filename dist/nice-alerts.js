@@ -62,14 +62,23 @@
 	    yesText: 'Yes',
 	    noText: 'No'
 	  };
-
-	  this._setHooks();
 	}
 
 	NiceAlert.prototype = {
 	  _setHooks: function () {
-	    this.view.closeBtn.addEventListener('click', this.hide.bind(this));
-	    document.addEventListener('keydown', this.handleKeydown.bind(this));
+	    this.hideHandler = this.hide.bind(this);
+	    this.keydownHandler = this.handleKeydown.bind(this);
+	    this.view.closeBtn.addEventListener('click', this.hideHandler);
+	    document.addEventListener('keydown', this.keydownHandler);
+	  },
+
+	  _setConfirmHooks: function () {
+	    this.view.yesBtn.addEventListener('click', this.yesHandler);
+	    this.view.noBtn.addEventListener('click', this.noHandler);
+	  },
+	  _removeConfirmHooks: function () {
+	    this.view.yesBtn.removeEventListener('click', this.yesHandler);
+	    this.view.noBtn.removeEventListener('click', this.noHandler);
 	  },
 
 	  handleKeydown:  function(evt) {
@@ -120,6 +129,7 @@
 	  },
 
 	  show: function (userOptions) {
+	    this._setHooks();
 	    this.options = {};
 	    util.extend(this.options, this.defaultOptions, userOptions);
 	    this.setContainerClass(this.options.type);
@@ -137,7 +147,7 @@
 	      util.fadeIn(this.view.alertContainer);
 	    } else {
 	      this.view.closeBtn.classList.add('hide');
-	      util.fadeIn(this.alertContainer, function() {
+	      util.fadeIn(this.view.alertContainer, function() {
 	        setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
 	      }.bind(this));
 	    }
@@ -150,24 +160,26 @@
 	    this.yesHandler = this.handleYesClick.bind(this);
 	    this.noHandler = this.handleNoClick.bind(this);
 
-	    this.view.yesBtn.addEventListener('click', this.yesHandler);
-	    this.view.noBtn.addEventListener('click', this.noHandler);
+	    this._setConfirmHooks();
 	  },
 
 	  handleYesClick: function (e) {
-	    this.hide(this.options.closeHandler);
-	    if (this.options.yesHandler) { this.options.yesHandler(); }
-	    this.view.yesBtn.removeEventListener('click', this.yesHandler);
+	    this.hide(function () {
+	      this.options.closeHandler();
+	      if (this.options.yesHandler) { this.options.yesHandler(); }
+	    }.bind(this));
 	  },
 
 	  handleNoClick: function (e) {
-	    this.hide(this.options.closeHandler);
-	    if (this.options.noHandler) { this.options.noHandler(); }
-	    this.view.noBtn.removeEventListener('click', this.noHandler);
+	    this.hide(function () {
+	      this.options.closeHandler();
+	      if (this.options.noHandler) { this.options.noHandler(); }
+	    }.bind(this));
 	  },
 
 	  hide: function (callback) {
 	    util.fadeOut(this.view.alertContainer, callback);
+	    this._removeConfirmHooks();
 	  }
 	};
 
@@ -209,7 +221,7 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/icon?family=Material+Icons);", ""]);
 
 	// module
-	exports.push([module.id, ".hide {\n  display: none; }\n\n.text-right {\n  text-align: right; }\n\n.text-center {\n  text-align: center; }\n\n.text-left {\n  text-align: left; }\n\n#user-alert {\n  padding: 20px;\n  position: fixed;\n  left: 22%;\n  top: 30%;\n  background-color: white;\n  border: 3px solid #555555;\n  -webkit-border-radius: 5px;\n  border-radius: 5px;\n  background-clip: padding-box;\n  /* stops bg color from leaking */\n  font-size: 14px;\n  font-size: 1.428rem;\n  color: #555555;\n  z-index: 100;\n  width: 55%;\n  max-width: 650px !important; }\n  #user-alert i {\n    font-size: 26px;\n    font-size: 2.652rem; }\n  #user-alert .close {\n    color: #555555;\n    position: absolute;\n    top: 10px;\n    right: 10px;\n    height: 45px !important;\n    width: 45px;\n    padding: 0;\n    background: white;\n    z-index: 200;\n    cursor: pointer;\n    -webkit-transition: color 200ms ease-in-out;\n    -moz-transition: color 200ms ease-in-out;\n    -ms-transition: color 200ms ease-in-out;\n    -o-transition: color 200ms ease-in-out;\n    transition: color 200ms ease-in-out; }\n    #user-alert .close:hover {\n      color: #E74C3C; }\n  #user-alert .user-message-container {\n    display: block;\n    width: 100%; }\n    #user-alert .user-message-container > .user-alert-icon, #user-alert .user-message-container .message-text-container {\n      display: inline-block;\n      height: 100%;\n      vertical-align: middle; }\n      #user-alert .user-message-container > .user-alert-icon:last-child, #user-alert .user-message-container .message-text-container:last-child {\n        padding-left: 0; }\n    #user-alert .user-message-container .user-alert-icon {\n      width: 19%; }\n      #user-alert .user-message-container .user-alert-icon i {\n        font-size: 60px;\n        font-size: 6.12rem; }\n    #user-alert .user-message-container .message-text-container {\n      width: 75%; }\n  #user-alert .user-alert-footer hr {\n    margin-top: 20px;\n    margin-bottom: 20px; }\n  #user-alert .user-alert-footer .btn-wrapper {\n    width: 30%;\n    min-width: 125px;\n    display: inline-block; }\n    #user-alert .user-alert-footer .btn-wrapper .btn {\n      width: 90%;\n      height: 50px;\n      border: none;\n      cursor: pointer;\n      font-size: 10px;\n      font-size: 1.02rem;\n      -webkit-border-radius: 3px;\n      border-radius: 3px;\n      background-clip: padding-box;\n      /* stops bg color from leaking */\n      -webkit-transition: background-color 200ms ease-in-out;\n      -moz-transition: background-color 200ms ease-in-out;\n      -ms-transition: background-color 200ms ease-in-out;\n      -o-transition: background-color 200ms ease-in-out;\n      transition: background-color 200ms ease-in-out;\n      -webkit-transition: box-shadow 200ms ease-in-out;\n      -moz-transition: box-shadow 200ms ease-in-out;\n      -ms-transition: box-shadow 200ms ease-in-out;\n      -o-transition: box-shadow 200ms ease-in-out;\n      transition: box-shadow 200ms ease-in-out;\n      -webkit-transition: -moz-box-shadow 200ms ease-in-out;\n      -moz-transition: -moz-box-shadow 200ms ease-in-out;\n      -ms-transition: -moz-box-shadow 200ms ease-in-out;\n      -o-transition: -moz-box-shadow 200ms ease-in-out;\n      transition: -moz-box-shadow 200ms ease-in-out;\n      -webkit-transition: -webkit-box-shadow 200ms ease-in-out;\n      -moz-transition: -webkit-box-shadow 200ms ease-in-out;\n      -ms-transition: -webkit-box-shadow 200ms ease-in-out;\n      -o-transition: -webkit-box-shadow 200ms ease-in-out;\n      transition: -webkit-box-shadow 200ms ease-in-out; }\n    #user-alert .user-alert-footer .btn-wrapper #btn-no {\n      background-color: #e12e1c; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-no:hover {\n        background-color: #E74C3C;\n        -webkit-box-shadow: 0px 1px 3px #131313;\n        -moz-box-shadow: 0px 1px 3px #131313;\n        box-shadow: 0px 1px 3px #131313; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-no:focus {\n        background-color: #E74C3C;\n        -webkit-box-shadow: 0px 1px 3px #131313;\n        -moz-box-shadow: 0px 1px 3px #131313;\n        box-shadow: 0px 1px 3px #131313; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-no:focus:hover {\n          background-color: #E74C3C;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n    #user-alert .user-alert-footer .btn-wrapper #btn-yes {\n      background-color: #33ba80; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-yes:hover {\n        background-color: #51cf99;\n        -webkit-box-shadow: 0px 1px 3px #131313;\n        -moz-box-shadow: 0px 1px 3px #131313;\n        box-shadow: 0px 1px 3px #131313; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-yes:focus {\n        background-color: #51cf99;\n        -webkit-box-shadow: 0px 1px 3px #131313;\n        -moz-box-shadow: 0px 1px 3px #131313;\n        box-shadow: 0px 1px 3px #131313; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-yes:focus:hover {\n          background-color: #51cf99;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n\n.message-info .user-alert-icon i {\n  color: #5bc0de; }\n\n.message-success .user-alert-icon i {\n  color: #51cf99; }\n\n.message-confirm .user-alert-icon i {\n  color: #009DAD; }\n\n.message-warning .user-alert-icon i {\n  color: #f0ad4e; }\n\n.message-failure .user-alert-icon i {\n  color: #E74C3C; }\n", ""]);
+	exports.push([module.id, "html, body {\n  font-family: \"droid_sans\", Helvetica-, Arial, sans-serif; }\n\n.hide {\n  display: none; }\n\n.text-right {\n  text-align: right; }\n\n.text-center {\n  text-align: center; }\n\n.text-left {\n  text-align: left; }\n\nbody {\n  background: aquamarine; }\n\n#user-alert {\n  padding: 20px;\n  position: fixed;\n  left: 22%;\n  top: 30%;\n  background-color: white;\n  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);\n  -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);\n  -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);\n  -webkit-border-radius: 5px;\n  border-radius: 5px;\n  background-clip: padding-box;\n  /* stops bg color from leaking */\n  font-size: 14px;\n  font-size: 1.428rem;\n  color: #555555;\n  z-index: 100;\n  width: 55%;\n  max-width: 650px !important; }\n  #user-alert i {\n    font-size: 26px;\n    font-size: 2.652rem; }\n  #user-alert .close {\n    color: #555555;\n    position: absolute;\n    top: 10px;\n    right: 10px;\n    height: 45px !important;\n    width: 45px;\n    padding: 0;\n    background: white;\n    z-index: 200;\n    cursor: pointer;\n    -webkit-transition: color 200ms ease-in-out;\n    -moz-transition: color 200ms ease-in-out;\n    -ms-transition: color 200ms ease-in-out;\n    -o-transition: color 200ms ease-in-out;\n    transition: color 200ms ease-in-out; }\n    #user-alert .close:hover {\n      color: #E74C3C; }\n  #user-alert .user-message-container {\n    display: block;\n    width: 100%; }\n    #user-alert .user-message-container > .user-alert-icon, #user-alert .user-message-container .message-text-container {\n      display: inline-block;\n      height: 100%;\n      vertical-align: middle; }\n      #user-alert .user-message-container > .user-alert-icon:last-child, #user-alert .user-message-container .message-text-container:last-child {\n        padding-left: 0; }\n    #user-alert .user-message-container .user-alert-icon {\n      width: 19%; }\n      #user-alert .user-message-container .user-alert-icon i {\n        font-size: 60px;\n        font-size: 6.12rem; }\n    #user-alert .user-message-container .message-text-container {\n      width: 75%; }\n  #user-alert .user-alert-footer {\n    text-align: right; }\n    #user-alert .user-alert-footer hr {\n      margin-top: 20px;\n      margin-bottom: 20px; }\n    #user-alert .user-alert-footer .btn-wrapper {\n      width: 30%;\n      min-width: 125px;\n      display: inline-block; }\n      #user-alert .user-alert-footer .btn-wrapper .btn {\n        width: 90%;\n        height: 50px;\n        border: none;\n        cursor: pointer;\n        font-size: 10px;\n        font-size: 1.02rem;\n        -webkit-border-radius: 3px;\n        border-radius: 3px;\n        background-clip: padding-box;\n        /* stops bg color from leaking */\n        -webkit-transition: background-color 200ms ease-in-out;\n        -moz-transition: background-color 200ms ease-in-out;\n        -ms-transition: background-color 200ms ease-in-out;\n        -o-transition: background-color 200ms ease-in-out;\n        transition: background-color 200ms ease-in-out;\n        -webkit-transition: box-shadow 200ms ease-in-out;\n        -moz-transition: box-shadow 200ms ease-in-out;\n        -ms-transition: box-shadow 200ms ease-in-out;\n        -o-transition: box-shadow 200ms ease-in-out;\n        transition: box-shadow 200ms ease-in-out;\n        -webkit-transition: -moz-box-shadow 200ms ease-in-out;\n        -moz-transition: -moz-box-shadow 200ms ease-in-out;\n        -ms-transition: -moz-box-shadow 200ms ease-in-out;\n        -o-transition: -moz-box-shadow 200ms ease-in-out;\n        transition: -moz-box-shadow 200ms ease-in-out;\n        -webkit-transition: -webkit-box-shadow 200ms ease-in-out;\n        -moz-transition: -webkit-box-shadow 200ms ease-in-out;\n        -ms-transition: -webkit-box-shadow 200ms ease-in-out;\n        -o-transition: -webkit-box-shadow 200ms ease-in-out;\n        transition: -webkit-box-shadow 200ms ease-in-out; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-no {\n        background-color: #e12e1c; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-no:hover {\n          background-color: #E74C3C;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-no:focus {\n          background-color: #E74C3C;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n          #user-alert .user-alert-footer .btn-wrapper #btn-no:focus:hover {\n            background-color: #E74C3C;\n            -webkit-box-shadow: 0px 1px 3px #131313;\n            -moz-box-shadow: 0px 1px 3px #131313;\n            box-shadow: 0px 1px 3px #131313; }\n      #user-alert .user-alert-footer .btn-wrapper #btn-yes {\n        background-color: #33ba80; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-yes:hover {\n          background-color: #51cf99;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n        #user-alert .user-alert-footer .btn-wrapper #btn-yes:focus {\n          background-color: #51cf99;\n          -webkit-box-shadow: 0px 1px 3px #131313;\n          -moz-box-shadow: 0px 1px 3px #131313;\n          box-shadow: 0px 1px 3px #131313; }\n          #user-alert .user-alert-footer .btn-wrapper #btn-yes:focus:hover {\n            background-color: #51cf99;\n            -webkit-box-shadow: 0px 1px 3px #131313;\n            -moz-box-shadow: 0px 1px 3px #131313;\n            box-shadow: 0px 1px 3px #131313; }\n\n.message-info .user-alert-icon i {\n  color: #5bc0de; }\n\n.message-success .user-alert-icon i {\n  color: #51cf99; }\n\n.message-confirm .user-alert-icon i {\n  color: #009DAD; }\n\n.message-warning .user-alert-icon i {\n  color: #f0ad4e; }\n\n.message-failure .user-alert-icon i {\n  color: #E74C3C; }\n\n@media (max-width: 440px) {\n  #user-alert {\n    left: 19%; }\n  .message-text-container {\n    display: block !important;\n    margin: auto;\n    text-align: center !important; }\n  .user-alert-icon {\n    margin: 10px auto !important;\n    width: 100% !important; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    width: 45% !important; } }\n\n@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (max-width: 875px) {\n  #user-alert {\n    left: 19%; }\n  .message-text-container {\n    display: block !important;\n    margin: auto;\n    text-align: center !important; }\n  .user-alert-icon {\n    margin: 10px auto !important;\n    width: 100% !important; }\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    width: 45% !important; } }\n\n@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (max-width: 475px) {\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    display: block !important;\n    width: 100% !important; }\n  #btn-yes {\n    margin-bottom: 10px; } }\n\n@media (max-width: 240px) {\n  .user-alert-footer {\n    text-align: center !important; }\n  .btn-wrapper {\n    display: block !important;\n    width: 100% !important; }\n  #btn-yes {\n    margin-bottom: 10px; } }\n", ""]);
 
 	// exports
 
@@ -618,7 +630,7 @@
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = "<div id=\"user-alert\" class=\"hide\">\n  <section class=\"user-message-container\">\n    <div class=\"user-alert-icon text-center\">\n      <i class=\"material-icons\">info</i>\n    </div>\n    <div class=\"message-text-container text-left\">\n      <div class=\"user-alert-message\"></div>\n    </div>\n    <div class=\"close text-right\"><i class=\"material-icons\">clear</i></div>\n  </section>\n  <section class=\"user-alert-footer\">\n    <div class=\"text-right\">\n      <hr>\n      <div class=\"btn-wrapper\">\n        <button id=\"btn-yes\" class=\"btn\"></button>\n      </div>\n      <div class=\"btn-wrapper\">\n        <button id=\"btn-no\" class=\"btn\"></button>\n      </div>\n    </div>\n  </section>\n</div>\n";
+	module.exports = "<div id=\"user-alert\" class=\"hide\">\n  <section class=\"user-message-container\">\n    <div class=\"user-alert-icon text-center\">\n      <i class=\"material-icons\">info</i>\n    </div>\n    <div class=\"message-text-container text-left\">\n      <div class=\"user-alert-message\"></div>\n    </div>\n    <div class=\"close text-right\"><i class=\"material-icons\">clear</i></div>\n  </section>\n  <section class=\"user-alert-footer\">\n    <hr>\n    <div class=\"btn-wrapper\">\n      <button id=\"btn-yes\" class=\"btn\"></button>\n    </div>\n    <div class=\"btn-wrapper\">\n      <button id=\"btn-no\" class=\"btn\"></button>\n    </div>\n  </section>\n</div>\n";
 
 /***/ }
 /******/ ]);
