@@ -70,7 +70,7 @@ module.exports = function(grunt) {
       acceptance: {
         configFile: 'karma.conf.js',
         browsers: ['Chrome', 'Firefox'],
-        files: [{ src: './dist/*.js' }, { src: './dev/tests/acceptance/*.js' }]
+        files: [{ src: './dist/nice-alerts.js' }, { src: './dev/tests/acceptance/*.js' }]
       },
       unit: {
         configFile: 'karma.conf.js',
@@ -88,7 +88,14 @@ module.exports = function(grunt) {
       },
       unit: {
         files: ['dev/tests/unit/*.js'],
-        tasks: ['unit'],
+        tasks: ['karma:unit'],
+        options: {
+          spawn: false
+        }
+      },
+      acceptance: {
+        files: ['dev/tests/acceptance/*.js'],
+        tasks: ['karma:acceptance'],
         options: {
           spawn: false
         }

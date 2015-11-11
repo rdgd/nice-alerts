@@ -51,6 +51,8 @@
 	__webpack_require__(1);
 	var NiceAlert = __webpack_require__(5);
 
+	window.niceAlert = new NiceAlert();
+
 
 /***/ },
 /* 1 */
@@ -510,12 +512,24 @@
 	  }
 	};
 
-	window.NiceAlert = new NiceAlert();
+	module.exports = NiceAlert;
 
 
 /***/ },
 /* 6 */
 /***/ function(module, exports) {
+
+	window.Element.prototype.triggerCustomEvent = function (evt, data) {
+	  var event;
+	  if (window.CustomEvent) {
+	    event = new CustomEvent(evt, data);
+	  } else {
+	    event = document.createEvent('CustomEvent');
+	    event.initCustomEvent(evt, true, true, data);
+	  }
+
+	  this.dispatchEvent(event);
+	};
 
 	module.exports = {
 	  extend: function (out) {

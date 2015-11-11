@@ -102,4 +102,4 @@ NiceAlert.prototype = {
   }
 };
 
-window.NiceAlert = new NiceAlert();
+module.exports = NiceAlert;
