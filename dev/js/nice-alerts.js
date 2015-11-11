@@ -4,3 +4,5 @@
 */
 require('../sass/general.scss');
 var NiceAlert = require('./NiceAlert.js');
+
+window.niceAlert = new NiceAlert();

@@ -51,6 +51,8 @@
 	__webpack_require__(1);
 	var NiceAlert = __webpack_require__(5);
 
+	window.niceAlert = new NiceAlert();
+
 
 /***/ },
 /* 1 */
@@ -510,7 +512,7 @@
 	  }
 	};
 
-	window.NiceAlert = new NiceAlert();
+	module.exports = NiceAlert;
 
 
 /***/ },
