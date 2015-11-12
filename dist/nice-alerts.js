@@ -519,6 +519,18 @@
 /* 6 */
 /***/ function(module, exports) {
 
+	window.Element.prototype.triggerCustomEvent = function (evt, data) {
+	  var event;
+	  if (window.CustomEvent) {
+	    event = new CustomEvent(evt, data);
+	  } else {
+	    event = document.createEvent('CustomEvent');
+	    event.initCustomEvent(evt, true, true, data);
+	  }
+
+	  this.dispatchEvent(event);
+	};
+
 	module.exports = {
 	  extend: function (out) {
 	    out = out || {};
