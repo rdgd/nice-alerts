@@ -71,26 +71,14 @@ module.exports = function(grunt) {
         configFile: 'karma.conf.js',
         browsers: ['Chrome', 'Firefox'],
         files: [{ src: './dist/nice-alerts.js' }, { src: './dev/tests/acceptance/*.js' }]
-      },
-      unit: {
-        configFile: 'karma.conf.js',
-        browsers: ['PhantomJS'],
-        files: [{ src: './node_modules/phantomjs-polyfill/bind-polyfill.js' }, { src: './dev/js/*.js' }, { src: './dev/tests/unit/*.js' }]
       }
     },
     watch: {
       all: {
         files: ['dev/**/*.js', 'dev/sass/*.scss', 'dev/sass/**/*.scss'],
-        tasks: ['jshint', 'jscs', 'karma:unit', 'webpack:all', 'uglify:all'],
+        tasks: ['jshint', 'jscs', 'webpack:all', 'uglify:all'],
         options: {
           spawn: false,
-        }
-      },
-      unit: {
-        files: ['dev/tests/unit/*.js'],
-        tasks: ['karma:unit'],
-        options: {
-          spawn: false
         }
       },
       acceptance: {
@@ -110,8 +98,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-notify');
-  grunt.registerTask('default', ['jshint', 'jscs', 'webpack:all', 'uglify:all', 'karma:unit', 'karma:acceptance']);
+  grunt.registerTask('default', ['jshint', 'jscs', 'webpack:all', 'uglify:all', 'karma:acceptance']);
   grunt.registerTask('build', ['jshint', 'jscs', 'webpack:all', 'uglify:all']);
-  grunt.registerTask('qa', ['karma:unit', 'karma:acceptance']);
-  grunt.registerTask('unit', ['karma:unit']);
+  grunt.registerTask('qa', ['karma:acceptance']);
 };
