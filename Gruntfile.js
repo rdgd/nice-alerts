@@ -24,7 +24,7 @@ module.exports = function(grunt) {
         preserveComments: false
       },
       all: {
-        files: grunt.file.expandMapping(['dist/*.js'], 'dist/', {
+        files: grunt.file.expandMapping(['dist/nice-alerts.js'], 'dist/', {
 		    	flatten: true,
 	        rename: function(destBase, destPath) {
             if (destPath.indexOf('.min.js') !== -1) { return destBase + destPath; }
