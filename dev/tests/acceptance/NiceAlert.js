@@ -74,19 +74,19 @@ describe('A nice alert', function () {
     });
 
     it('has "yes" and "no" buttons by default', function () {
-      var yesBtn = window.niceAlert.view.yesBtn;
-      var noBtn = window.niceAlert.view.noBtn;
-      expect(yesBtn.textContent).toBe('Yes');
-      expect(noBtn.textContent).toBe('No');
+      var confirmBtn = window.niceAlert.view.confirmBtn;
+      var denyBtn = window.niceAlert.view.denyBtn;
+      expect(confirmBtn.textContent).toBe('Yes');
+      expect(denyBtn.textContent).toBe('No');
     });
 
     it('accepts custom values for its buttons', function () {
-      window.niceAlert.show({ type: 'confirm', yesText: 'Test, yeah', noText: 'Ing, yeah' });
-      var yesTxt = window.niceAlert.view.yesBtn.textContent;
-      var noTxt = window.niceAlert.view.noBtn.textContent;
+      window.niceAlert.show({ type: 'confirm', confirmText: 'Test, yeah', denyText: 'Ing, yeah' });
+      var confirmTxt = window.niceAlert.view.confirmBtn.textContent;
+      var denyTxt = window.niceAlert.view.denyBtn.textContent;
 
-      expect(yesTxt).toBe('Test, yeah');
-      expect(noTxt).toBe('Ing, yeah');
+      expect(confirmTxt).toBe('Test, yeah');
+      expect(denyTxt).toBe('Ing, yeah');
     });
 
     it('hides the alert by default when the yes button is clicked', function () {});

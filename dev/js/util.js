@@ -10,6 +10,18 @@ window.Element.prototype.triggerCustomEvent = function (evt, data) {
   this.dispatchEvent(event);
 };
 
+document.triggerCustomEvent = function (evt, data) {
+  var event;
+  if (window.CustomEvent) {
+    event = new CustomEvent(evt, data);
+  } else {
+    event = document.createEvent('CustomEvent');
+    event.initCustomEvent(evt, true, true, data);
+  }
+
+  document.dispatchEvent(event);
+};
+
 module.exports = {
   extend: function (out) {
     out = out || {};

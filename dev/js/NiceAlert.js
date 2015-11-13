@@ -1,104 +1,85 @@
 var util = require('./util.js');
 var NiceAlertView = require('./NiceAlertView.js');
 
+// Constructing the view, setting up defaults, and setting hooks
 function NiceAlert () {
-  this.options = {};
   this.view = new NiceAlertView();
   this.defaultOptions = {
     message: 'This is an alert!',
     type: 'info',
     duration: 0,
     closeHandler: null,
-    yesHandler: null,
-    noHandler: null,
-    yesText: 'Yes',
-    noText: 'No'
+    confirmHandler: null,
+    denyHandler: null,
+    confirmText: 'Yes',
+    denyText: 'No'
   };
   this._setHooks();
 }
 
 NiceAlert.prototype = {
-  // May be called many times
   _setHooks: function () {
-    this.hideHandler = this.hide.bind(this);
-    this.keydownHandler = this.handleKeydown.bind(this);
-    document.addEventListener('keydown', this.keydownHandler);
+    this.view.confirmBtn.addEventListener('click', this.confirm.bind(this));
+    this.view.denyBtn.addEventListener('click', this.deny.bind(this));
+    this.view.closeBtn.addEventListener('click', this.hide.bind(this));
+    document.addEventListener('keydown', this.trapESCKey.bind(this));
   },
 
-  _setConfirmHooks: function () {
-    this.view.yesBtn.addEventListener('click', this.yesHandler);
-    this.view.noBtn.addEventListener('click', this.noHandler);
-  },
-  _removeConfirmHooks: function () {
-    this.view.yesBtn.removeEventListener('click', this.yesHandler);
-    this.view.noBtn.removeEventListener('click', this.noHandler);
-  },
-
-  handleKeydown:  function(evt) {
-    var alertIsVisible = !this.view.alertContainer.classList.contains('hide');
-    evt = evt || window.event;
-    if (evt.keyCode == 27 && alertIsVisible) { this.hide(); }
-  },
-
-  setMessage: function (msg) {
-    this.view.messageContainer.innerHTML = '';
-    this.view.message.innerHTML = msg;
-    this.view.messageContainer.appendChild(this.view.message);
-  },
-
+  /*
+    The NiceAlert class is only instantiated once. But every time a user calls they
+    have to opportunity to display what appears to be and behaves like a new alert.
+    I didn't want to repeatedly create and destroy a bunch of DOM.
+  */
   show: function (userOptions) {
-    this.view.closeBtn.addEventListener('click', this.hideHandler);
+    this._setup(userOptions);
+    this._show(this.options.duration);
+  },
+
+  // Handling user passed options. Manipulating DOM depending on these options.
+  _setup: function (opts) {
     this.options = {};
-    util.extend(this.options, this.defaultOptions, userOptions);
+    util.extend(this.options, this.defaultOptions, opts);
+
     this.view.setContainerClass(this.options.type);
-    this.setMessage(this.options.message);
+    this.view.setMessage(this.options.message);
 
-    if (this.options.type == 'confirm') {
-      this.view.footer.classList.remove('hide');
-      this.makeConfirm();
+    // All the alerts only differ by icon and icon color, except for 'confirm'.
+    if (this.options.type !== 'confirm') {
+      this.view.hideFooter();
     } else {
-      this.view.footer.classList.add('hide');
-    }
-
-    if (this.options.duration === 0) {
-      this.view.closeBtn.classList.remove('hide');
-      util.fadeIn(this.view.alertContainer);
-    } else {
-      this.view.closeBtn.classList.add('hide');
-      util.fadeIn(this.view.alertContainer, function() {
-        setTimeout(this.hide.bind(this, this.options.closeHandler), this.options.duration);
-      }.bind(this));
+      this.view.setDenyText(this.options.denyText);
+      this.view.setConfirmText(this.options.confirmText);
+      this.view.showFooter();
     }
   },
 
-  makeConfirm: function () {
-    this.view.noBtn.textContent = this.options.noText;
-    this.view.yesBtn.textContent = this.options.yesText;
-
-    this.yesHandler = this.handleYesClick.bind(this);
-    this.noHandler = this.handleNoClick.bind(this);
-
-    this._setConfirmHooks();
+  // Calling this method is what really shows the view. The show() method is just for users.
+  _show: function (duration) {
+    if (duration === 0) {
+      this.view.fadeIn();
+    } else {
+      var callback = function () { setTimeout(this.hide.bind(this), duration); };
+      this.view.fadeIn(callback.bind(this));
+    }
   },
 
-  handleYesClick: function (e) {
-    this.hide(function () {
-      this.options.closeHandler();
-      if (this.options.yesHandler) { this.options.yesHandler(); }
-    }.bind(this));
+  // Alert type 'confirm' only. When the confirm/green button is clicked.
+  confirm: function (e) {
+    this.hide(this.options.confirmHandler);
   },
 
-  handleNoClick: function (e) {
-    this.hide(function () {
-      this.options.closeHandler();
-      if (this.options.noHandler) { this.options.noHandler(); }
-    }.bind(this));
+  // Alert type 'confirm' only. When the deny/red button is clicked.
+  deny: function (e) {
+    this.hide(this.options.denyHandler);
   },
 
   hide: function (callback) {
-    util.fadeOut(this.view.alertContainer, callback);
-    this._removeConfirmHooks();
-    this.view.closeBtn.removeEventListener('click', this.hideHandler);
+    this.view.fadeOut(this.options.closeHandler, callback);
+  },
+
+  trapESCKey:  function(evt) {
+    evt = evt || window.event;
+    if (evt.keyCode == 27 && this.view.isVisible()) { this.hide(); }
   }
 };
 
