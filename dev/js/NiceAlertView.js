@@ -123,7 +123,7 @@ NiceAlertView.prototype = {
 
   // Should use Object.defineProperty, but I don't like the way it looks aesthetically.
   isVisible: function () {
-    return !this.view.wrapper.classList.contains('hide');
+    return !this.wrapper.classList.contains('hide');
   },
   /*
     We are setting a different class on our container for each type of alert.
