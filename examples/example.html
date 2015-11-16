@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nice Alerts Example</title>
+<style>
+body {
+  max-width: 579px;
+  margin:auto;
+}
+
+h1 {
+  text-align: center;
+  font-family: helvetica, arial, sans-serif;
+}
+
+h3 {
+  text-align: left;
+}
+
+.example-set {
+  margin-bottom: 50px;
+}
+
+.example-btn {
+  width: 100px;
+  height: 35px;
+  border-radius: 5px;
+  font-size: 14px;
+  margin: 5px 5px 5px 0px;
+  background: lightgray;
+  cursor: pointer;
+  transition: all 300ms;
+  -moz-transition: all 300ms;
+  -webkit-transition: all 300ms;
+}
+
+.example-btn:hover {
+  background: white;
+}
+</style>
+</head>
+<body>
+<h1>Nice Alerts</h1>
+<hr>
+<section class="example-set">
+  <h3>Basic Use</h3>
+  <button id="info" class="example-btn">Info</button>
+  <button id="success" class="example-btn">Success</button>
+  <button id="confirm" class="example-btn">Confirm</button>
+  <button id="warning" class="example-btn">Warning</button>
+  <button id="failure" class="example-btn">Failure</button>
+</section>
+<section class="example-set">
+  <h3>Callbacks</h3>
+  <button id="closeCallback" class="example-btn">Close</button>
+  <button id="confirmCallback" class="example-btn">Confirm</button>
+  <button id="denyCallback" class="example-btn">Deny</button>
+</section>
+<section class="example-set">
+  <h3>Button Text</h3>
+  <button id="confirmText" class="example-btn">Confirm</button>
+  <button id="denyText" class="example-btn">Deny</button>
+</section>
+<script src="../dist/nice-alerts.js"></script>
+<script>
+window.onload = (function() {
+  // Basic Use Section
+  var info = document.getElementById('info');
+  var success = document.getElementById('success');
+  var confirm = document.getElementById('confirm');
+  var warning = document.getElementById('warning');
+  var failure = document.getElementById('failure');
+
+
+  info.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'info',
+      message: 'This is an info alert. It is meant to convey benign, or at most, useful information.'
+    });
+  });
+
+  success.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'success',
+      message: 'This is a success alert. It is meant to verify, praise, and all things positive.'
+    });
+  });
+
+  confirm.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'confirm',
+      message: 'This is an confirm. It beckons binary user input.'
+    });
+  });
+
+  warning.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'warning',
+      message: 'This is a warning alert. It let\'s the user know to be careful.'
+    });
+  });
+
+  failure.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'failure',
+      message: 'This is a failure alert. It let\'s the user know that something has gone wrong.'
+    });
+  });
+
+  // Callbacks Section
+  var closeCallback = document.getElementById('closeCallback');
+  var confirmCallback = document.getElementById('confirmCallback');
+  var denyCallback = document.getElementById('denyCallback');
+
+  closeCallback.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'info',
+      message: 'When this alert is closed, a native alert will display with the text "Closing!"',
+      closeHandler: function () { alert('Closing!'); }
+    });
+  });
+
+  confirmCallback.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'confirm',
+      message: 'When the confirm, "YES", button is clicked, a native alert will display with the text "Confirmed!"',
+      confirmHandler: function () { alert('Confirmed!'); }
+    });
+  });
+
+  denyCallback.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'confirm',
+      message: 'When the deny, "NO", button is clicked, a native alert will display with the text "Denied!"',
+      denyHandler: function () { alert('No stairway?! Denied!'); }
+    });
+  });
+
+  // Button Text
+  var confirmText = document.getElementById('confirmText');
+  var denyText = document.getElementById('denyText');
+
+  confirmText.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'confirm',
+      message: 'The confirm button should say "TOTALLY"',
+      confirmText: 'Totally'
+    });
+  });
+
+  denyText.addEventListener('click', function () {
+    niceAlert.show({
+      type: 'confirm',
+      message: 'The deny button should say "NEVER!"',
+      denyText: 'Never'
+    });
+  });
+})();
+</script>
+</body>
+</html>
