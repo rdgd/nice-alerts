@@ -1,7 +1,6 @@
 var util = require('./util.js');
 var NiceAlertController = require('./NiceAlertController.js');
 
-// Constructing the view, setting up defaults, and setting hooks
 function NiceAlertFactory () {
   this.defaultOptions = {
     message: 'This is an alert!',
