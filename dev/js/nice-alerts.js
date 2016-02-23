@@ -3,6 +3,6 @@
   code to be unit tested.
 */
 require('../sass/general.scss');
-var NiceAlert = require('./NiceAlert.js');
+var NiceAlertFacade = require('./NiceAlertFacade.js');
 
-window.niceAlert = new NiceAlert();
+window.niceAlert = new NiceAlertFacade();

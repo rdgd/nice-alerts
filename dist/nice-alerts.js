@@ -49,9 +49,9 @@
 	  code to be unit tested.
 	*/
 	__webpack_require__(1);
-	var NiceAlert = __webpack_require__(5);
+	var NiceAlertFacade = __webpack_require__(5);
 
-	window.niceAlert = new NiceAlert();
+	window.niceAlert = new NiceAlertFacade();
 
 
 /***/ },
@@ -408,12 +408,28 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var util = __webpack_require__(6);
-	var NiceAlertView = __webpack_require__(7);
+	var NiceAlertFactory = __webpack_require__(6);
+
+	function NiceAlertFacade () {
+	  this.factory = new NiceAlertFactory();
+
+	  this.show = function (userOptions) {
+	    this.factory.create(userOptions);
+	  };
+	}
+
+	module.exports = NiceAlertFacade;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var util = __webpack_require__(7);
+	var NiceAlertController = __webpack_require__(8);
 
 	// Constructing the view, setting up defaults, and setting hooks
-	function NiceAlert () {
-	  this.view = new NiceAlertView();
+	function NiceAlertFactory () {
 	  this.defaultOptions = {
 	    message: 'This is an alert!',
 	    type: 'info',
@@ -424,80 +440,26 @@
 	    confirmText: 'Yes',
 	    denyText: 'No'
 	  };
-	  this._setHooks();
 	}
 
-	NiceAlert.prototype = {
-	  _setHooks: function () {
-	    this.view.confirmBtn.addEventListener('click', this.confirm.bind(this));
-	    this.view.denyBtn.addEventListener('click', this.deny.bind(this));
-	    this.view.closeBtn.addEventListener('click', this.hide.bind(this));
-	    document.addEventListener('keydown', this.trapESCKey.bind(this));
-	  },
+	NiceAlertFactory.prototype = {
+	  create: function (userOptions) {
+	    function NiceAlert (options) {
+	      this.controller = new NiceAlertController(options);
+	    }
 
-	  /*
-	    The NiceAlert class is only instantiated once. But every time a user calls they
-	    have to opportunity to display what appears to be and behaves like a new alert.
-	    I didn't want to repeatedly create and destroy a bunch of DOM.
-	  */
-	  show: function (userOptions) {
-	    this._setup(userOptions);
-	    this._show(this.options.duration);
-	  },
-
-	  // Handling user passed options. Manipulating DOM depending on these options.
-	  _setup: function (opts) {
 	    this.options = {};
-	    util.extend(this.options, this.defaultOptions, opts);
+	    util.extend(this.options, this.defaultOptions, userOptions);
 
-	    this.view.setContainerClass(this.options.type);
-	    this.view.setMessage(this.options.message);
-
-	    // All the alerts only differ by icon and icon color, except for 'confirm'.
-	    if (this.options.type !== 'confirm') {
-	      this.view.hideFooter();
-	    } else {
-	      this.view.setDenyText(this.options.denyText);
-	      this.view.setConfirmText(this.options.confirmText);
-	      this.view.showFooter();
-	    }
-	  },
-
-	  // Calling this method is what really shows the view. The show() method is just for users.
-	  _show: function (duration) {
-	    if (duration === 0) {
-	      this.view.fadeIn();
-	    } else {
-	      var callback = function () { setTimeout(this.hide.bind(this), duration); };
-	      this.view.fadeIn(callback.bind(this));
-	    }
-	  },
-
-	  // Alert type 'confirm' only. When the confirm/green button is clicked.
-	  confirm: function (e) {
-	    this.hide(this.options.confirmHandler);
-	  },
-
-	  // Alert type 'confirm' only. When the deny/red button is clicked.
-	  deny: function (e) {
-	    this.hide(this.options.denyHandler);
-	  },
-
-	  hide: function (callback) {
-	    this.view.fadeOut(this.options.closeHandler, callback);
-	  },
-
-	  trapESCKey:  function(evt) {
-	    evt = evt || window.event;
-	    if (evt.keyCode == 27 && this.view.isVisible()) { this.hide(); }
+	    return new NiceAlert(this.options);
 	  }
 	};
 
-	module.exports = NiceAlert;
+	module.exports = NiceAlertFactory;
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	window.Element.prototype.triggerCustomEvent = function (evt, data) {
@@ -578,37 +540,114 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var util = __webpack_require__(6);
+	var NiceAlertView = __webpack_require__(9);
+	var NiceAlertModel = __webpack_require__(10);
+	var util = __webpack_require__(7);
 
-	function NiceAlertView () {
+	function NiceAlertController (options) {
+	  this.model = new NiceAlertModel(options);
+	  this.view = new NiceAlertView(this.model);
+
+	  this.denyHandler = options.denyHandler;
+	  this.confirmHandler = options.confirmHandler;
+	  this.closeHandler = options.closeHandler;
+
+	  this._setHooks();
+	  this._show();
+	}
+
+	NiceAlertController.prototype = {
+	  _setHooks: function () {
+	    this.view.confirmBtn.addEventListener('click', this.confirm.bind(this));
+	    this.view.denyBtn.addEventListener('click', this.deny.bind(this));
+	    this.view.closeBtn.addEventListener('click', this.hide.bind(this, this.closeHandler));
+	    document.addEventListener('keydown', this.trapESCKey.bind(this));
+	  },
+
+	  _show: function () {
+	    var callback;
+	    if (this.model.duration !== 0) {
+	      callback = function () { setTimeout(this.hide.bind(this), this.model.duration); }.bind(this);
+	    }
+
+	    util.fadeIn(this.view.wrapper, function (callback) {
+	      document.triggerCustomEvent('nice:shown', { target: this.view.wrapper });
+	      if (callback) { callback(); }
+	    }.bind(this, callback));
+	  },
+
+	  hide: function (callback) {
+	    var callbacks = arguments;
+	    util.fadeOut(this.view.wrapper, function (callbacks) {
+	      document.triggerCustomEvent('nice:hidden', { target: this.view.wrapper });
+	      for (var i = 0; i < callbacks.length; i++) {
+	        if (callbacks[i] && typeof callbacks[i] === 'function') { callbacks[i](); }
+	      }
+	    }.bind(this, callbacks));
+	  },
+
+	  // Alert type 'confirm' only. When the confirm/green button is clicked.
+	  confirm: function (e) {
+	    this.hide(this.confirmHandler);
+	  },
+
+	  // Alert type 'confirm' only. When the deny/red button is clicked.
+	  deny: function (e) {
+	    this.hide(this.denyHandler);
+	  },
+
+	  trapESCKey:  function(evt) {
+	    evt = evt || window.event;
+	    if (evt.keyCode == 27 && this.view.isVisible()) { this.hide(this.closeHandler); }
+	  }
+	};
+
+	module.exports = NiceAlertController;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var util = __webpack_require__(7);
+
+	function NiceAlertView (viewModel) {
+	  this.messageText = viewModel.message;
+	  this.denyText = viewModel.denyText;
+	  this.confirmText = viewModel.confirmText;
+	  this.shouldHideFooter = viewModel.hideFooter;
+	  this.iconText = viewModel.iconText;
+	  this.containerClass = viewModel.containerClass;
+
 	  this._makeView();
 	}
 
 	NiceAlertView.prototype = {
-	  /*
-	    Could consdier accepting some options in order to template, a better flow.
-	    This will require approaching the project in a different way though, as it
-	    implies DOM construction on more than one occaision. Fine for now.
-	  */
 	  _makeView: function () {
+	    // Select existing alert
+	    var userAlert = document.getElementById('user-alert');
+
 	    // Create elements
-	    this.wrapper = document.createElement('div');
 	    var userMessageContainer = document.createElement('section');
 	    var userAlertIconWrap = document.createElement('div');
-	    this.icon = document.createElement('i');
 	    var messageTextContainer = document.createElement('div');
+	    var closeBtnIcon = document.createElement('i');
+	    var confirmBtnWrap = document.createElement('div');
+	    var denyBtnWrap = document.createElement('div');
+
+	    this.wrapper = document.createElement('div');
+	    this.icon = document.createElement('i');
 	    this.messageContainer = document.createElement('div');
 	    this.closeBtn = document.createElement('div');
-	    var closeBtnIcon = document.createElement('i');
 	    this.footer = document.createElement('div');
-	    var confirmBtnWrap = document.createElement('div');
 	    this.confirmBtn = document.createElement('button');
-	    var denyBtnWrap = document.createElement('div');
 	    this.denyBtn = document.createElement('button');
 	    this.message = document.createElement('span');
+	    this.message.innerHTML = this.messageText;
+	    this.messageContainer.appendChild(this.message);
 
 	    // Assign ID's
 	    this.wrapper.id = 'user-alert';
@@ -616,16 +655,13 @@
 	    this.denyBtn.id = 'btn-no';
 
 	    // Add classes
-	    this.wrapper.classList.add('hide');
+	    this.wrapper.classList.add('hide', this.containerClass);
 	    userMessageContainer.classList.add('user-message-container');
-	    userAlertIconWrap.classList.add('user-alert-icon');
-	    userAlertIconWrap.classList.add('text-center');
+	    userAlertIconWrap.classList.add('user-alert-icon', 'text-center');
 	    this.icon.classList.add('material-icons');
-	    messageTextContainer.classList.add('message-text-container');
-	    messageTextContainer.classList.add('text-left');
+	    messageTextContainer.classList.add('message-text-container', 'text-left');
 	    this.messageContainer.classList.add('user-alert-message');
-	    this.closeBtn.classList.add('close');
-	    this.closeBtn.classList.add('text-right');
+	    this.closeBtn.classList.add('close', 'text-right');
 	    closeBtnIcon.classList.add('material-icons');
 	    this.footer.classList.add('user-alert-footer');
 	    confirmBtnWrap.classList.add('btn-wrapper');
@@ -634,8 +670,10 @@
 	    this.denyBtn.classList.add('btn');
 
 	    // Add innerHTML
-	    this.icon.innerHTML = 'info';
+	    this.icon.innerHTML = this.iconText;
 	    closeBtnIcon.innerHTML = 'clear';
+	    this.denyBtn.innerHTML = this.denyText;
+	    this.confirmBtn.innerHTML = this.confirmText;
 
 	    // Append together all of the pieces
 	    this.wrapper.appendChild(userMessageContainer);
@@ -645,79 +683,57 @@
 	    messageTextContainer.appendChild(this.messageContainer);
 	    userMessageContainer.appendChild(this.closeBtn);
 	    this.closeBtn.appendChild(closeBtnIcon);
-	    this.wrapper.appendChild(this.footer);
-	    this.footer.appendChild(confirmBtnWrap);
-	    confirmBtnWrap.appendChild(this.confirmBtn);
-	    this.footer.appendChild(denyBtnWrap);
-	    denyBtnWrap.appendChild(this.denyBtn);
 
-	    // Now on page
-	    document.body.appendChild(this.wrapper);
-	  },
+	    if (!this.shouldHideFooter) {
+	      this.wrapper.appendChild(this.footer);
+	      this.footer.appendChild(confirmBtnWrap);
+	      confirmBtnWrap.appendChild(this.confirmBtn);
+	      this.footer.appendChild(denyBtnWrap);
+	      denyBtnWrap.appendChild(this.denyBtn);
+	    }
 
-	  /*
-	    Each of the following two methods accepts a callback.
-	    We have util functions which fade elements in and out. They also accept callbacks.
-	    We want to pass the callback to the util fade function so that once the face is complete,
-	    the callback will be ran. The tricky part is, we ALSO want trigger a custom event
-	    at this time, so we can't just pass the callback along, and simply pasting
-	    the event trigger in our util sullys object scope. This is why we are passing
-	    an anonymous function bound to the NiceAlertView class context, and then passing
-	    our callback as an arg after specifying the context. EEK.
-	  */
-	  fadeIn: function (callback) {
-	    util.fadeIn(this.wrapper, function (callback) {
-	      document.triggerCustomEvent('nice:shown', { target: this.wrapper });
-	      if (callback) { callback(); }
-	    }.bind(this, callback));
-	  },
-
-	  fadeOut: function (callback) {
-	    var callbacks = arguments;
-	    util.fadeOut(this.wrapper, function (callbacks) {
-	      document.triggerCustomEvent('nice:hidden', { target: this.wrapper });
-	      for (var i = 0; i < callbacks.length; i++) {
-	        if (callbacks[i] && typeof callbacks[i] === 'function') { callbacks[i](); }
-	      }
-	    }.bind(this, callbacks));
-	  },
-
-	  setMessage: function (msg) {
-	    this.messageContainer.innerHTML = '';
-	    this.message.innerHTML = msg;
-	    this.messageContainer.appendChild(this.message);
-	  },
-
-	  setConfirmText: function (txt) {
-	    this.confirmBtn.textContent = txt;
-	  },
-
-	  setDenyText: function (txt) {
-	    this.denyBtn.textContent = txt;
-	  },
-
-	  hideFooter: function () {
-	    this.footer.classList.add('hide');
-	  },
-
-	  showFooter: function () {
-	    this.footer.classList.remove('hide');
+	    if (!userAlert) {
+	      document.body.appendChild(this.wrapper);
+	    } else {
+	      document.body.replaceChild(this.wrapper, userAlert);
+	    }
 	  },
 
 	  // Should use Object.defineProperty, but I don't like the way it looks aesthetically.
 	  isVisible: function () {
 	    return !this.wrapper.classList.contains('hide');
-	  },
-	  /*
-	    We are setting a different class on our container for each type of alert.
-	    The icon names correspond to Google Material Icons font. https://www.google.com/design/icons/
-	  */
-	  setContainerClass: function (alertType) {
+	  }
+	};
+
+	module.exports = NiceAlertView;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	function NiceAlertModel (options) {
+	  this.type = options.type;
+	  this.duration = options.duration;
+
+	  this.message = options.message;
+	  this.denyText = options.denyText;
+	  this.confirmText = options.confirmText;
+	  this.hideFooter = this.type !== 'confirm';
+	  this._deriveContainerClassAndIcon();
+	}
+
+	/*
+	  We are deriving a different class on our container for each type of alert.
+	  The icon names correspond to Google Material Icons font. https://www.google.com/design/icons/
+	*/
+	NiceAlertModel.prototype = {
+	  _deriveContainerClassAndIcon: function () {
 	    // Defaults
 	    var className = 'message-info';
 	    var iconName = 'info';
 
-	    switch (alertType) {
+	    switch (this.type) {
 	      case 'success': {
 	        className = 'message-success';
 	        iconName = 'check_circle';
@@ -741,12 +757,13 @@
 	      case 'info': { break; }
 	      default: { break; }
 	    }
-	    this.wrapper.setAttribute('class', className);
-	    this.icon.textContent = iconName;
+
+	    this.containerClass = className;
+	    this.iconText = iconName;
 	  }
 	};
 
-	module.exports = NiceAlertView;
+	module.exports = NiceAlertModel;
 
 
 /***/ }
