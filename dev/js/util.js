@@ -42,34 +42,13 @@ module.exports = {
   },
 
   fadeIn: function (el, callback) {
-    el.classList.remove('hide');
-    el.style.opacity = 0;
-    var last = +new Date();
-    var tick = function() {
-      el.style.opacity = +el.style.opacity + (new Date() - last) / 400;
-      last = +new Date();
-
-      if (+el.style.opacity < 1) {
-        if (window.requestAnimationFrame) {
-          requestAnimationFrame(tick);
-        }
-        setTimeout(tick, 16);
-      }
-    };
-
-    tick();
+    setTimeout(function () { el.classList.remove('hide'); }, 100);
     if (callback && typeof callback == 'function') { callback(); }
   },
 
   fadeOut: function (el, callback) {
-    el.style.opacity = 1;
-    (function fade () {
-      if ((el.style.opacity -= 0.1) < 0) {
-        el.classList.add('hide');
-      } else {
-        requestAnimationFrame(fade);
-      }
-    })();
+    el.classList.add('hide');
+    setTimeout(function () { el.classList.add('displaynone'); }, 400);
     if (callback && typeof callback == 'function') { callback(); }
   }
 };
