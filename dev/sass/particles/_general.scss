@@ -26,8 +26,8 @@
   .close {
     color: $gray;
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 13px;
+    right: 13px;
     height: 45px !important;
     width: 45px;
     padding: 0;
@@ -50,8 +50,13 @@
       &:last-child { padding-left: 0; }
     }
     .user-alert-icon {
-      width: 19%;
-      i { @include font-size(60); }
+      width: 17%;
+      text-align: left;
+      i {
+        @include font-size(60);
+        vertical-align: middle;
+        margin: -6%;
+      }
     }
     .message-text-container {
       width: 75%;
@@ -79,6 +84,9 @@
         @include transition(box-shadow, 200ms, ease-in-out);
         @include transition(-moz-box-shadow, 200ms, ease-in-out);
         @include transition(-webkit-box-shadow, 200ms, ease-in-out);
+        &:focus {
+           outline: none;
+        }
       }
 
       #btn-no {
@@ -156,13 +164,13 @@
 (-webkit-min-device-pixel-ratio: 2),
 (min-resolution: 192dpi), (max-width: 1400px) {
   #user-alert {
-    left: 22%;
+    left: 23%;
   }
 }
 
 @media
 (-webkit-min-device-pixel-ratio: 2),
-(min-resolution: 192dpi), (max-width: 875px) {
+(min-resolution: 192dpi), (max-width: 960px) {
   #user-alert {
     left: 19%;
   }
@@ -172,8 +180,12 @@
     text-align: center !important;
   }
   .user-alert-icon {
+    text-align: center !important;
     margin: 10px auto !important;
     width: 100% !important;
+    i {
+      margin: 0 !important;
+    }
   }
 
   .user-alert-footer {
