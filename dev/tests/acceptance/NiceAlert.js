@@ -1,38 +1,29 @@
 describe('A nice alert', function () {
-  it('has a view which is added to the document', function () {
-    var view = document.getElementById('user-alert');
-    expect(view).not.toBeNull();
-  });
-
-  it('is hidden at first', function () {
-    var view = document.getElementById('user-alert');
-    var viewIsHidden = window.getComputedStyle(view).display === 'none';
-    expect(viewIsHidden).toBeTruthy();
-  });
-
   it('can be shown', function () {
+    niceAlert.show({ type: 'success' });
     var view = document.getElementById('user-alert');
-    window.niceAlert.show({ type: 'success' });
-    expect(view.classList).not.toContain('hide');
+    expect(window.getComputedStyle(view).opacity).not.toBe(0);
   });
 
   it('has a default message', function () {
-    var messageEl = niceAlert.view.messageContainer;
     window.niceAlert.show({ type: 'success' });
-    expect(messageEl.textContent).toBe(niceAlert.options.message);
+    var messageEl = document.querySelector('.user-alert-message');
+
+    expect(messageEl.textContent).toBe('This is an alert!');
   });
 
   it('can be given a custom message', function () {
-    var view = document.getElementById('user-alert');
-    var messageEl = niceAlert.view.messageContainer;
     window.niceAlert.show({ type: 'success', message: 'Testing!' });
+    var view = document.getElementById('user-alert');
+    var messageEl = document.querySelector('.user-alert-message');
+
     expect(messageEl.textContent).toBe('Testing!');
   });
 
   describe('A success alert', function () {
     it('has a check mark icon', function () {
       window.niceAlert.show({ type: 'success' });
-      var icon = window.niceAlert.view.icon;
+      var icon = document.querySelector('.user-alert-icon i');
       expect(icon.classList).toContain('material-icons');
       expect(icon.textContent).toBe('check_circle');
     });
@@ -41,7 +32,7 @@ describe('A nice alert', function () {
   describe('An info alert', function () {
     it('has an "i" info icon', function () {
       window.niceAlert.show({ type: 'info' });
-      var icon = window.niceAlert.view.icon;
+      var icon = document.querySelector('.user-alert-icon i');
       expect(icon.classList).toContain('material-icons');
       expect(icon.textContent).toBe('info');
     });
@@ -50,7 +41,7 @@ describe('A nice alert', function () {
   describe('A warning alert', function () {
     it('has an exclamation mark in a triangle icon', function () {
       window.niceAlert.show({ type: 'warning' });
-      var icon = window.niceAlert.view.icon;
+      var icon = document.querySelector('.user-alert-icon i');
       expect(icon.classList).toContain('material-icons');
       expect(icon.textContent).toBe('warning');
     });
@@ -59,7 +50,7 @@ describe('A nice alert', function () {
   describe('A failure alert', function () {
     it('has an exclamation mark in a circle icon', function () {
       window.niceAlert.show({ type: 'failure' });
-      var icon = window.niceAlert.view.icon;
+      var icon = document.querySelector('.user-alert-icon i');
       expect(icon.classList).toContain('material-icons');
       expect(icon.textContent).toBe('error');
     });
@@ -68,22 +59,22 @@ describe('A nice alert', function () {
   describe('A confirm alert', function () {
     it('has a communication icon', function () {
       window.niceAlert.show({ type: 'confirm' });
-      var icon = window.niceAlert.view.icon;
+      var icon = document.querySelector('.user-alert-icon i');
       expect(icon.classList).toContain('material-icons');
       expect(icon.textContent).toBe('question_answer');
     });
 
     it('has "yes" and "no" buttons by default', function () {
-      var confirmBtn = window.niceAlert.view.confirmBtn;
-      var denyBtn = window.niceAlert.view.denyBtn;
+      var confirmBtn = document.getElementById('btn-yes');
+      var denyBtn = document.getElementById('btn-no');
       expect(confirmBtn.textContent).toBe('Yes');
       expect(denyBtn.textContent).toBe('No');
     });
 
     it('accepts custom values for its buttons', function () {
       window.niceAlert.show({ type: 'confirm', confirmText: 'Test, yeah', denyText: 'Ing, yeah' });
-      var confirmTxt = window.niceAlert.view.confirmBtn.textContent;
-      var denyTxt = window.niceAlert.view.denyBtn.textContent;
+      var confirmTxt = document.getElementById('btn-yes').textContent;
+      var denyTxt = document.getElementById('btn-no').textContent;
 
       expect(confirmTxt).toBe('Test, yeah');
       expect(denyTxt).toBe('Ing, yeah');
