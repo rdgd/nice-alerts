@@ -14,7 +14,7 @@ function NiceAlertView (viewModel) {
 NiceAlertView.prototype = {
   _makeView: function () {
     // Select existing alert
-    var userAlert = document.getElementById('user-alert');
+    var userAlert = document.getElementById('user-alert-wrap');
 
     // Create elements
     var userMessageContainer = document.createElement('section');
@@ -24,6 +24,7 @@ NiceAlertView.prototype = {
     var confirmBtnWrap = document.createElement('div');
     var denyBtnWrap = document.createElement('div');
 
+    this.outerWrapper = document.createElement('div');
     this.wrapper = document.createElement('div');
     this.icon = document.createElement('i');
     this.messageContainer = document.createElement('div');
@@ -36,12 +37,13 @@ NiceAlertView.prototype = {
     this.messageContainer.appendChild(this.message);
 
     // Assign ID's
+    this.outerWrapper.id = 'user-alert-wrap';
     this.wrapper.id = 'user-alert';
     this.confirmBtn.id = 'btn-yes';
     this.denyBtn.id = 'btn-no';
 
     // Add classes
-    this.wrapper.classList.add('hide', this.containerClass);
+    this.outerWrapper.classList.add('hide', this.containerClass);
     userMessageContainer.classList.add('user-message-container');
     userAlertIconWrap.classList.add('user-alert-icon', 'text-center');
     this.icon.classList.add('material-icons');
@@ -62,6 +64,7 @@ NiceAlertView.prototype = {
     this.confirmBtn.innerHTML = this.confirmText;
 
     // Append together all of the pieces
+    this.outerWrapper.appendChild(this.wrapper);
     this.wrapper.appendChild(userMessageContainer);
     userMessageContainer.appendChild(userAlertIconWrap);
     userAlertIconWrap.appendChild(this.icon);
@@ -79,15 +82,15 @@ NiceAlertView.prototype = {
     }
 
     if (!userAlert) {
-      document.body.appendChild(this.wrapper);
+      document.body.appendChild(this.outerWrapper);
     } else {
-      document.body.replaceChild(this.wrapper, userAlert);
+      document.body.replaceChild(this.outerWrapper, userAlert);
     }
   },
 
   // Should use Object.defineProperty, but I don't like the way it looks aesthetically.
   isVisible: function () {
-    return !this.wrapper.classList.contains('hide');
+    return !this.outerWrapper.classList.contains('hide');
   }
 };
 

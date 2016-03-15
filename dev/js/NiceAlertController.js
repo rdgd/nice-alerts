@@ -28,16 +28,16 @@ NiceAlertController.prototype = {
       callback = function () { setTimeout(this.hide.bind(this), this.model.duration); }.bind(this);
     }
 
-    util.fadeIn(this.view.wrapper, function (callback) {
-      document.triggerCustomEvent('nice:shown', { target: this.view.wrapper });
+    util.fadeIn(this.view.outerWrapper, function (callback) {
+      document.triggerCustomEvent('nice:shown', { target: this.view.outerWrapper });
       if (callback) { callback(); }
     }.bind(this, callback));
   },
 
   hide: function (callback) {
     var callbacks = arguments;
-    util.fadeOut(this.view.wrapper, function (callbacks) {
-      document.triggerCustomEvent('nice:hidden', { target: this.view.wrapper });
+    util.fadeOut(this.view.outerWrapper, function (callbacks) {
+      document.triggerCustomEvent('nice:hidden', { target: this.view.outerWrapper });
       for (var i = 0; i < callbacks.length; i++) {
         if (callbacks[i] && typeof callbacks[i] === 'function') { callbacks[i](); }
       }
