@@ -69,7 +69,6 @@ module.exports = function(grunt) {
     karma: {
       acceptance: {
         configFile: 'karma.conf.js',
-        browsers: ['Chrome', 'Firefox'],
         files: [{ src: './dist/nice-alerts.js' }, { src: './dev/tests/acceptance/*.js' }]
       }
     },

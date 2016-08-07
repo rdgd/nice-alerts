@@ -1,7 +1,7 @@
 {
   "name": "nice-alerts",
   "description": "Native alerts/confirms/etc... are ugly and not robust. This aims to be an improvement, and add some additional functionality.",
-  "main": "dist/nice-alerts.min.js",
+  "main": "dist/nice-alerts.js",
   "authors": [
     "Ryan Gray"
   ],
