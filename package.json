@@ -5,6 +5,10 @@
   "author": "Ryan Gray",
   "license": "WTFPL",
   "homepage": "",
+  "scripts": {
+    "build": "grunt build",
+    "test": "grunt qa"
+  },
   "devDependencies": {
     "css-loader": "^0.22.0",
     "file-loader": "^0.8.4",
